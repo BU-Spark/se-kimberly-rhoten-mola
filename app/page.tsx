@@ -45,8 +45,8 @@ export default function Home() {
           <div className={styles.searchContainer}>
             <input 
               className={styles.searchInput}
-              type="text" 
-              placeholder="Start typing or select a service" 
+              type="text"
+              placeholder="Start typing or select a service"
             />
             <button className={styles.searchButton}>GO TO DATABASE</button>
           </div>
