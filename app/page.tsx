@@ -7,7 +7,7 @@ export default function Home() {
       <header className={styles.header}>
         <div className={styles.logoArea}>
           <Image
-            src="/city-of-boston-logo.png"
+            src="/cob_b_white-01.png"
             alt="City of Boston Logo"
             width={60}
             height={60}
@@ -35,7 +35,7 @@ export default function Home() {
       <main className={styles.main}>
         <section className={styles.heroSection}>
           <h1 className={styles.heroTitle}>
-            Mayor’s Office of LGBTQIA2S+ Advancement Directory
+            Mayor’s Office of<br></br>LGBTQIA2S+<br></br>Advancement<br></br>Directory
           </h1>
           <p className={styles.heroSubtitle}>
             Supporting Boston’s LGBTQ+ community by providing resources,
@@ -43,7 +43,7 @@ export default function Home() {
             support, and create pathways to thrive.
           </p>
           <div className={styles.searchContainer}>
-            <input 
+            <input
               className={styles.searchInput}
               type="text"
               placeholder="Start typing or select a service"
