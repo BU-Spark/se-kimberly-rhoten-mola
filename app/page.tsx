@@ -1,7 +1,9 @@
 import Image from "next/image";
 import styles from "./page.module.css";
+import Map from "./components/Map";
 
 export default function Home() {
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string;
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -35,7 +37,8 @@ export default function Home() {
       <main className={styles.main}>
         <section className={styles.heroSection}>
           <h1 className={styles.heroTitle}>
-            Mayor’s Office of<br></br>LGBTQIA2S+<br></br>Advancement<br></br>Directory
+            Mayor’s Office of<br></br>LGBTQIA2S+<br></br>Advancement<br></br>
+            Directory
           </h1>
           <p className={styles.heroSubtitle}>
             Supporting Boston’s LGBTQ+ community by providing resources,
@@ -62,7 +65,8 @@ export default function Home() {
 
         <section className={styles.placeholderSection}>
           <h2>Resource Map</h2>
-          <p>[Placeholder for interactive map component]</p>
+          <p></p>
+          <Map apiKey={apiKey} />
         </section>
       </main>
       <footer className={styles.footer}>
