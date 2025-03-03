@@ -9,7 +9,7 @@ git checkout -b cs519
 2: from project root install dependencies
 
 npm install
-nvm install 20
+npm install 20
 npm install @react-google-maps/api
 
 3: create the file ".env.local" in the project root and put this in there:
