@@ -55,7 +55,8 @@
 
 .heroSection {
 
-  text-align: center;
+  text-align: left;
+  padding: 2rem 10%;
   min-height: 400px;
   margin-bottom: 2rem;
   background: url('/bostonprideblue.png') center center / cover no-repeat;
@@ -73,7 +74,7 @@
 
 .heroSubtitle {
   max-width: 700px;
-  margin: 0 auto 1.5rem auto;
+  margin-bottom: 1rem;
   line-height: 1.4;
   font-size: 1rem;
   color: white;
@@ -81,13 +82,15 @@
 }
 
 .searchContainer {
+  
   display: flex;
-  justify-content: center;
+  width: 300%;
+  justify-content: left;
   margin-bottom: 1rem;
 }
 
 .searchInput {
-  width: 300px;
+  width: 500px;
   padding: 0.5rem;
   margin-right: 0.5rem;
 }
