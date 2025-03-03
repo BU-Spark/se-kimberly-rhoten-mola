@@ -4,17 +4,14 @@ import styles from "./page.module.css";
 export default function Home() {
   return (
     <div className={styles.container}>
-      {/* HEADER */}
       <header className={styles.header}>
         <div className={styles.logoArea}>
-          {/* Example City of Boston logo (replace with real file path) */}
           <Image
             src="/city-of-boston-logo.png"
             alt="City of Boston Logo"
             width={60}
             height={60}
           />
-          {/* Example: show mayor name or a site title in the header */}
           <div className={styles.headerText}>
             <h2>Mayor Michelle Wu</h2>
             <span>Mayor&apos;s Office of LGBTQIA2S+ Advancement</span>
@@ -45,8 +42,6 @@ export default function Home() {
             services, and programs that enhance well-being, provide vital
             support, and create pathways to thrive.
           </p>
-
-          {/* SEARCH BAR & BUTTONS */}
           <div className={styles.searchContainer}>
             <input 
               className={styles.searchInput}
@@ -60,8 +55,6 @@ export default function Home() {
             CLICK HERE FOR EMERGENCY RESOURCES
           </button>
         </section>
-
-        {/* PLACEHOLDERS FOR OTHER CONTENT */}
         <section className={styles.placeholderSection}>
           <h2>Events</h2>
           <p>[Placeholder for upcoming events list or calendar]</p>
@@ -72,8 +65,6 @@ export default function Home() {
           <p>[Placeholder for interactive map component]</p>
         </section>
       </main>
-
-      {/* FOOTER */}
       <footer className={styles.footer}>
         <p>© 2025 City of Boston. All Rights Reserved.</p>
       </footer>
