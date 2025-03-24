@@ -1,11 +1,26 @@
+"use client";
+
 import Image from "next/image";
 import styles from "./page.module.css";
 import Map from "./components/Map";
+import SearchBar from "./components/SearchBar";
 
 export default function Home() {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string;
+
+  // If you want to filter map markers locally, define a handler:
+  const handleFilter = (filters: {
+    category?: string;
+    subcategory?: string;
+  }) => {
+    // e.g., query Firestore or pass data to Map
+    console.log("Filters from SearchBar:", filters);
+    // fetch organizations or pass to your ResourceExplorer, etc.
+  };
+
   return (
     <div className={styles.container}>
+      {/* HEADER */}
       <header className={styles.header}>
         <div className={styles.logoArea}>
           <Image
@@ -21,8 +36,9 @@ export default function Home() {
         </div>
         <nav className={styles.navMenu}>
           <ul>
+            {/* Clicking this goes to the Resource Database page */}
             <li>
-              <a href="#">Database</a>
+              <a href="/database">Database</a>
             </li>
             <li>
               <a href="#">Interactive Map</a>
@@ -34,30 +50,28 @@ export default function Home() {
         </nav>
       </header>
 
+      {/* MAIN */}
       <main className={styles.main}>
+        {/* HERO SECTION */}
         <section className={styles.heroSection}>
           <h1 className={styles.heroTitle}>
-            Mayor’s Office of<br></br>LGBTQIA2S+<br></br>Advancement<br></br>
-            Directory
+            Mayor’s Office of<br />LGBTQIA2S+<br />Advancement<br />Directory
           </h1>
           <p className={styles.heroSubtitle}>
             Supporting Boston’s LGBTQ+ community by providing resources,
             services, and programs that enhance well-being, provide vital
             support, and create pathways to thrive.
           </p>
-          <div className={styles.searchContainer}>
-            <input
-              className={styles.searchInput}
-              type="text"
-              placeholder="Start typing or select a service"
-            />
-            <button className={styles.searchButton}>GO TO DATABASE</button>
-          </div>
+
+          {/* NEW SEARCH BAR (with categories) */}
+          <SearchBar onFilter={handleFilter} />
 
           <button className={styles.emergencyButton}>
             CLICK HERE FOR EMERGENCY RESOURCES
           </button>
         </section>
+
+        {/* PLACEHOLDERS */}
         <section className={styles.placeholderSection}>
           <h2>Events</h2>
           <p>[Placeholder for upcoming events list or calendar]</p>
@@ -65,10 +79,11 @@ export default function Home() {
 
         <section className={styles.placeholderSection}>
           <h2>Resource Map</h2>
-          <p></p>
+          {/* If you want to show markers filtered by handleFilter, do so here */}
           <Map apiKey={apiKey} />
         </section>
       </main>
+
       <footer className={styles.footer}>
         <p>© 2025 City of Boston. All Rights Reserved.</p>
       </footer>
