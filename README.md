@@ -16,10 +16,6 @@ npm install 20
 
 npm install @react-google-maps/api
 
-3: create the file ".env.local" in the project root and put this in there:
-
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIzaSyCmyZPcurl3RuJF7BQvB5DRFJj1k26v4BI
-
 4: run development server and open http://localhost:3000 in browser
 
 npm run dev
