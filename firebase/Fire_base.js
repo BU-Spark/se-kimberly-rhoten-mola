@@ -4,24 +4,23 @@ import { collection, addDoc } from "firebase/firestore";
 // Function to Add Data to Firestore
 async function addOrganization() {
   try {
-     
     const organization = [
       {
-         Name : "",
-         Email_Phone_Number : "",
-         Organization_Name : "",
-         Organization_Description : "",
-         Organization_Website : "",
-         Organization_Address : "",
-         Public_Phone_Number : "",
-         Public_Email : "",
-         Preferred_Method_Of_Organizational_Contact : "",
-         Type_Of_Service : "",
-         Target_Population : "",
-         Neighborhood_Of_Organization_Neighborhoods_Primarily_Served : "",
-         Days_Hours_Of_Operation : "",
-         Program_Cost_To_Participant : "",
-         Health_Insurance_Required : "",
+        Name: "",
+        Email_Phone_Number: "",
+        Organization_Name : "",
+        Organization_Description : "",
+        Organization_Website : "",
+        Organization_Address : "",
+        Public_Phone_Number : "",
+        Public_Email : "",
+        Preferred_Method_Of_Organizational_Contact : "",
+        Type_Of_Service : "",
+        Target_Population : "",
+        Neighborhood_Of_Organization_Neighborhoods_Primarily_Served : "",
+        Days_Hours_Of_Operation : "",
+        Program_Cost_To_Participant : "",
+        Health_Insurance_Required : "",
       },
        {
          Name : "Calvin Gimpelevich",
@@ -216,7 +215,7 @@ async function addOrganization() {
         Organization_Name : "IMPACT Inc.",
         Organization_Description : "IMPACT works to prevent violence and abuse by giving people the skills to advocate for healthy relationships, sexual respect, and personal and community safety.",
         Organization_Website : "www.impactboston.org",
-        Organization_Address : "89 SOUTH ST",
+        Organization_Address : "89 SOUTH ST, Boston, MA 02111",
         Public_Phone_Number : "617-597-4945",
         Public_Email : "info@impactboston.org",
         Preferred_Method_Of_Organizational_Contact : "Emails",
@@ -454,7 +453,7 @@ async function addOrganization() {
           Organization_Name : "Greater Boston PFLAG",
           Organization_Description : "Greater Boston PFLAG's mission is to advocate for and advance equity  and societal affirmation of LGBTQ people by building and strengthening  loving families, safe communities, and a diverse and inclusive society.",
           Organization_Website : "gbpflag.org",
-          Organization_Address : "85 River Street",
+          Organization_Address : "85 River Street, Boston",
           Public_Phone_Number : "(781) 891-5966",
           Public_Email : "info@gbpflag.org",
           Preferred_Method_Of_Organizational_Contact : "Emails",
@@ -726,8 +725,6 @@ async function addOrganization() {
       const docRef = await addDoc(collection(db, "Organizations"), org);
       console.log("Document written with ID: ", docRef.id);
     }
-
-
 
     console.log("Document written with ID: ", docRef.id);
   } catch (error) {
