@@ -14,9 +14,22 @@ export default function SearchBar() {
   const router = useRouter();
   const [searchText, setSearchText] = useState('');
   const [suggestions, setSuggestions] = useState<Organization[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  // Fetch suggestions from Firestore
+  // Hardcoded service filtering options.
+  const serviceOptions = [
+    "Food",
+    "Health and Wellness",
+    "Hotlines",
+    "Legal Assistance",
+    "STI/HIV Support",
+    "Therapeutic Support",
+    "Trans Health and Social Services",
+    "Violence Prevention and Survivor Support",
+    "Youth Empowerment",
+  ];
+
+  // Fetch suggestions from Firestore based on organization name.
   const fetchSuggestions = async (text: string) => {
     if (!text.trim()) {
       setSuggestions([]);
@@ -28,7 +41,7 @@ export default function SearchBar() {
       const q = query(
         orgsRef,
         where("Organization_Name", ">=", text),
-        where("Organization_Name", "<=", text + "\uf8ff"),
+        where("Organization_Name", "<=", text + "\uf8ff")
       );
       const snapshot = await getDocs(q);
       const results: Organization[] = [];
@@ -48,33 +61,40 @@ export default function SearchBar() {
     }
   };
 
-  // Handle text input changes
+  // Handle text input changes.
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;
     setSearchText(text);
-    setShowSuggestions(true);
+    setShowDropdown(true);
     fetchSuggestions(text);
   };
 
-  // Handle Enter key
+  // Handle Enter key: search by the typed organization name.
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       router.push(`/database?search=${encodeURIComponent(searchText)}`);
+      setShowDropdown(false);
     }
   };
 
-  // Handle suggestion click
+  // Handle suggestion click: use the suggestion as the search term.
   const handleSuggestionClick = (org: Organization) => {
     setSearchText(org.Organization_Name);
-    setShowSuggestions(false);
-    router.push(
-      `/database?search=${encodeURIComponent(org.Organization_Name)}`,
-    );
+    setShowDropdown(false);
+    router.push(`/database?search=${encodeURIComponent(org.Organization_Name)}`);
   };
 
-  // Handle explicit search button click
+  // Handle click on a service option from the dropdown.
+  const handleServiceOptionClick = (serviceType: string) => {
+    setSearchText(serviceType);
+    setShowDropdown(false);
+    router.push(`/database?filter=${encodeURIComponent(serviceType)}`);
+  };
+
+  // Handle explicit search button click (using the typed text).
   const handleSearchClick = () => {
     router.push(`/database?search=${encodeURIComponent(searchText)}`);
+    setShowDropdown(false);
   };
 
   return (
@@ -86,6 +106,7 @@ export default function SearchBar() {
           value={searchText}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
+          onFocus={() => setShowDropdown(true)}
           style={{ flex: 1, padding: "0.5rem" }}
         />
         <button onClick={handleSearchClick} style={{ padding: "0.5rem 1rem" }}>
@@ -93,8 +114,8 @@ export default function SearchBar() {
         </button>
       </div>
 
-      {/* Dropdown suggestions */}
-      {showSuggestions && suggestions.length > 0 && (
+      {/* Dropdown menu for suggestions and service options */}
+      {showDropdown && (
         <div
           style={{
             position: "absolute",
@@ -104,17 +125,41 @@ export default function SearchBar() {
             background: "#fff",
             border: "1px solid #ccc",
             zIndex: 999,
-            maxHeight: "200px",
+            maxHeight: "300px",
             overflowY: "auto",
           }}
         >
-          {suggestions.map((org) => (
+          {/* Display organization name suggestions if available */}
+          {suggestions.length > 0 && (
+            <>
+              {suggestions.map((org) => (
+                <div
+                  key={org.id}
+                  onClick={() => handleSuggestionClick(org)}
+                  style={{ padding: "0.5rem", cursor: "pointer" }}
+                >
+                  {org.Organization_Name}
+                </div>
+              ))}
+              <div
+                style={{
+                  padding: "0.5rem",
+                  fontWeight: "bold",
+                  backgroundColor: "#eee",
+                }}
+              >
+                Or Filter by Service:
+              </div>
+            </>
+          )}
+          {/* Always show the service filtering options */}
+          {serviceOptions.map((option) => (
             <div
-              key={org.id}
-              onClick={() => handleSuggestionClick(org)}
+              key={option}
+              onClick={() => handleServiceOptionClick(option)}
               style={{ padding: "0.5rem", cursor: "pointer" }}
             >
-              {org.Organization_Name}
+              {option}
             </div>
           ))}
         </div>
