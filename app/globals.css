@@ -30,9 +30,17 @@ body {
   margin: 0;
 }
 
+/* globals.css */
 a {
-  color: inherit;
-  text-decoration: none;
+  color: #0070f3;         /* A blue color for links */
+  text-decoration: underline;  /* Underline links to distinguish them from plain text */
+  transition: color 0.2s ease;   /* Optional: Smooth transition for hover effects */
+}
+
+a:hover,
+a:focus {
+  color: #0055aa;         /* A darker blue for hover/focus state */
+  text-decoration: none;  /* Remove underline on hover if desired */
 }
 
 @media (prefers-color-scheme: dark) {

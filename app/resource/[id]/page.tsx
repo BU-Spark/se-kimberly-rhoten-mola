@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
@@ -15,10 +15,7 @@ const Map = dynamic(() => import("../../components/Map"), { ssr: false });
 export default function ResourceDetailPage() {
   const { id } = useParams(); // Firestore document ID from the URL
   const [resource, setResource] = useState<any | null>(null);
-  const [coordinates, setCoordinates] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
+  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
 
   // Fetch the resource from Firestore
   useEffect(() => {
@@ -26,9 +23,9 @@ export default function ResourceDetailPage() {
       try {
         const docRef = doc(db, "Organizations", id);
         const docSnap = await getDoc(docRef);
-
         if (docSnap.exists()) {
-          setResource(docSnap.data());
+          const data = docSnap.data();
+          setResource(data);
         } else {
           console.log("No such document in Firestore!");
         }
@@ -36,7 +33,6 @@ export default function ResourceDetailPage() {
         console.error("Error fetching resource:", error);
       }
     };
-
     if (id) {
       fetchResource();
     }
@@ -44,12 +40,7 @@ export default function ResourceDetailPage() {
 
   // If the resource doesn't have lat/lng but has an address, geocode it
   useEffect(() => {
-    if (
-      resource &&
-      !resource.lat &&
-      !resource.lng &&
-      resource.Organization_Address
-    ) {
+    if (resource && !resource.lat && !resource.lng && resource.Organization_Address) {
       geocodeAddress(resource.Organization_Address)
         .then(({ lat, lng }) => {
           console.log("Geocoded coordinates:", lat, lng);
@@ -62,9 +53,7 @@ export default function ResourceDetailPage() {
   }, [resource]);
 
   // Helper function to geocode an address using the Google Geocoding API
-  async function geocodeAddress(
-    address: string,
-  ): Promise<{ lat: number; lng: number }> {
+  async function geocodeAddress(address: string): Promise<{ lat: number; lng: number }> {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
     const encoded = encodeURIComponent(address);
     const res = await fetch(
@@ -72,7 +61,7 @@ export default function ResourceDetailPage() {
     );
     const data = await res.json();
     console.log("Geocoding API response:", data);
-    if (data.status === 'OK' && data.results.length > 0) {
+    if (data.status === "OK" && data.results.length > 0) {
       return data.results[0].geometry.location;
     } else {
       console.error("Geocoding error:", data.error_message || data.status);
@@ -105,13 +94,20 @@ export default function ResourceDetailPage() {
     lng,
   } = resource;
 
-  // Determine the effective coordinates: use resource's lat/lng, or geocoded coordinates, or fallback to Boston
+  // Determine the effective coordinates: use resource's lat/lng if available; otherwise use geocoded coordinates; otherwise fallback to Boston
   const effectiveLat = lat ?? coordinates?.lat ?? 42.3601;
   const effectiveLng = lng ?? coordinates?.lng ?? -71.0589;
 
+  console.log("Effective coordinates for detail page:", effectiveLat, effectiveLng);
+
+  // Utility for ensuring the website has a proper protocol
+  const formatUrl = (url: string) => {
+    return url.startsWith("http://") || url.startsWith("https://") ? url : `https://${url}`;
+  };
+
   return (
     <div className={styles.container}>
-      {/* HEADER - same style as main page */}
+      {/* HEADER - same as the main page, with clickable link */}
       <header className={styles.header}>
         <Link href="/" className={styles.logoArea}>
           <Image
@@ -144,7 +140,6 @@ export default function ResourceDetailPage() {
         <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>
           {Organization_Name || "Resource Name"}
         </h1>
-
         <div style={{ display: "flex", gap: "2rem" }}>
           {/* Left column: resource info */}
           <div style={{ flex: 1 }}>
@@ -154,32 +149,55 @@ export default function ResourceDetailPage() {
             <p style={{ marginBottom: '1rem' }}>
               {Organization_Description || "No description available."}
             </p>
-
             <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
               Additional Info
             </h2>
             <ul style={{ listStyleType: "disc", marginLeft: "1.5rem" }}>
               <li>
-                <strong>Name:</strong> {Name || "N/A"}
+                <strong>Website:</strong>{" "}
+                {Organization_Website ? (
+                  <a
+                    href={formatUrl(Organization_Website)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {Organization_Website}
+                  </a>
+                ) : (
+                  "N/A"
+                )}
               </li>
               <li>
-                <strong>Email/Phone:</strong> {Email_Phone_Number || "N/A"}
-              </li>
-              <li>
-                <strong>Website:</strong> {Organization_Website || "N/A"}
-              </li>
-              <li>
-                <strong>Address:</strong> {Organization_Address || "N/A"}
+                <strong>Address:</strong>{" "}
+                {Organization_Address ? (
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                      Organization_Address
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {Organization_Address}
+                  </a>
+                ) : (
+                  "N/A"
+                )}
               </li>
               <li>
                 <strong>Public Phone:</strong> {Public_Phone_Number || "N/A"}
               </li>
               <li>
-                <strong>Public Email:</strong> {Public_Email || "N/A"}
+                <strong>Public Email:</strong>{" "}
+                {Public_Email ? (
+                  <a href={`mailto:${Public_Email}`}>
+                    {Public_Email}
+                  </a>
+                ) : (
+                  "N/A"
+                )}
               </li>
               <li>
-                <strong>Preferred Contact:</strong>{" "}
-                {Preferred_Method_Of_Organizational_Contact || "N/A"}
+                <strong>Preferred Contact:</strong> {Preferred_Method_Of_Organizational_Contact || "N/A"}
               </li>
               <li>
                 <strong>Type of Service:</strong> {Type_Of_Service || "N/A"}
@@ -188,32 +206,26 @@ export default function ResourceDetailPage() {
                 <strong>Target Population:</strong> {Target_Population || "N/A"}
               </li>
               <li>
-                <strong>Neighborhood(s) Served:</strong>{" "}
-                {Neighborhood_Of_Organization_Neighborhoods_Primarily_Served ||
-                  "N/A"}
+                <strong>Neighborhood(s) Served:</strong> {Neighborhood_Of_Organization_Neighborhoods_Primarily_Served || "N/A"}
               </li>
               <li>
-                <strong>Days/Hours of Operation:</strong>{" "}
-                {Days_Hours_Of_Operation || "N/A"}
+                <strong>Days/Hours of Operation:</strong> {Days_Hours_Of_Operation || "N/A"}
               </li>
               <li>
-                <strong>Program Cost:</strong>{" "}
-                {Program_Cost_To_Participant || "N/A"}
+                <strong>Program Cost:</strong> {Program_Cost_To_Participant || "N/A"}
               </li>
               <li>
-                <strong>Health Insurance Required?:</strong>{" "}
-                {Health_Insurance_Required || "N/A"}
+                <strong>Health Insurance Required?:</strong> {Health_Insurance_Required || "N/A"}
               </li>
             </ul>
           </div>
 
-          {/* Right column: bigger map */}
+          {/* Right column: map showing ONLY this resource's marker */}
           <div style={{ width: "600px", height: "400px", flexShrink: 0 }}>
             <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
               Location
             </h2>
             <Map
-              apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
               markers={[
                 {
                   id,
