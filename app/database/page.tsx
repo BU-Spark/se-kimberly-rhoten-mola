@@ -17,11 +17,23 @@ export default function DatabasePage() {
     const fetchResources = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "Organizations"));
-        const data: unknown[] = [];
+        const data: any[] = [];
         querySnapshot.forEach((doc) => {
-          data.push({ id: doc.id, ...doc.data() });
+          const docData = doc.data();
+          // Filter out entries with no name or "Unnamed Resource"
+          if (
+            docData.Organization_Name &&
+            docData.Organization_Name.trim() !== "" &&
+            docData.Organization_Name !== "Unnamed Resource"
+          ) {
+            data.push({ id: doc.id, ...docData });
+          }
         });
-        setAllResources(data);
+        // Remove duplicate resources based on Organization_Name
+        const uniqueResources = Array.from(
+          new Map(data.map((item) => [item.Organization_Name, item])).values()
+        );
+        setAllResources(uniqueResources);
       } catch (err) {
         console.error("Error fetching resources:", err);
       }

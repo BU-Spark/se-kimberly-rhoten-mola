@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { LoadScript } from '@react-google-maps/api';
+import React from "react";
+import { LoadScript } from "@react-google-maps/api";
 
-const libraries = ['marker'] as const;
+const libraries = ["marker"] as const;
 
 export default function GoogleMapsProvider({
   apiKey,
@@ -13,7 +13,11 @@ export default function GoogleMapsProvider({
   children: React.ReactNode;
 }) {
   return (
-    <LoadScript googleMapsApiKey={apiKey} libraries={libraries} version="weekly">
+    <LoadScript
+      googleMapsApiKey={apiKey}
+      libraries={libraries}
+      version="weekly"
+    >
       {children}
     </LoadScript>
   );
