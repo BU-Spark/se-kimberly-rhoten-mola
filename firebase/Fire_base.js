@@ -1,4 +1,4 @@
-import { db } from "./configfirebase.js"; // Ensure correct file path
+import { db } from "./configfirebase.js";
 import { collection, addDoc } from "firebase/firestore";
 
 // Function to Add Data to Firestore
