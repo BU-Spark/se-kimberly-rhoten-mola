@@ -3,7 +3,6 @@
 import React from "react";
 import { LoadScript } from "@react-google-maps/api";
 
-const libraries = ["marker"] as const;
 
 export default function GoogleMapsProvider({
   apiKey,
@@ -15,7 +14,7 @@ export default function GoogleMapsProvider({
   return (
     <LoadScript
       googleMapsApiKey={apiKey}
-      libraries={libraries}
+      libraries={["marker"] as const}
       version="weekly"
     >
       {children}

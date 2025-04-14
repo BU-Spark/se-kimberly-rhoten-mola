@@ -4,23 +4,48 @@
   min-height: 100vh;
   font-family: sans-serif;
   color: #333;
+  font-size: 1.125rem; /* ~18px */
+  line-height: 1.6;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #f5f5f5;
+  background-color: #ffffff;
   padding: 1rem 2rem;
 }
 
-.logoArea {
-  display: flex;
-  align-items: center;
+.footer {
+  background-color: #f5f5f5;
+  padding: 1rem 2rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #666;
 }
 
-.logoArea img {
-  margin-right: 1rem;
+.heroSection {
+  text-align: left;
+  padding: 2rem 10%;
+  min-height: 500px;
+  background: url('/prideflags.jpg') center top / cover no-repeat;
+  background-position: center 80%;
+  width: 100%;
+}
+
+.heroTitle {
+  font-size: 2.5rem;
+  color: rgb(0, 0, 0);
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.heroSubtitle {
+  max-width: 700px;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+  font-size: 1.25rem; /* bigger than previous 1rem */
+  color: rgb(0, 0, 0);
 }
 
 .headerText h2 {
@@ -31,6 +56,9 @@
 .headerText span {
   font-size: 0.9rem;
   color: #091F2F;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .navMenu ul {
@@ -43,41 +71,15 @@
 
 .navMenu a {
   text-decoration: none;
+  font-size: 20px;
   color: #1871BD;
-  font-weight: 500;
+  font-weight: bold;
 }
 
 .main {
   flex: 1;
   display: flex;
   flex-direction: column;
-}
-
-.heroSection {
-
-  text-align: left;
-  padding: 2rem 10%;
-  min-height: 400px;
-  margin-bottom: 1rem;
-  background: url('/prideflags.jpg') center center / cover no-repeat;
-  width: 100%;
-}
-
-.heroTitle {
-  
-  font-size: 2rem;
-  color: rgb(0, 0, 0);
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-
-}
-
-.heroSubtitle {
-  max-width: 700px;
-  margin-bottom: 1rem;
-  line-height: 1.4;
-  font-size: 1rem;
-  color: rgb(0, 0, 0);
 }
 
 .searchContainer {
@@ -89,47 +91,30 @@
 }
 
 .searchInput {
-  width: 500px;
-  padding: 0.5rem;
+  width: 100rem;
+  min-height: 3rem;       /* ensures the input is at least 3rem tall */
+  padding: 1.5rem 0.75rem; /* vertical padding increased to make it thicker */
   margin-right: 0.5rem;
+  font-size: 1.125rem;
+  border: 2px solid #ccc;
+  box-sizing: border-box;
 }
 
 .searchButton {
   background-color: #45789C;
   color: #fff;
   border: none;
-  padding: 0.6rem 1rem;
+  padding: 1.5rem 1.25rem;  /* increase vertical padding to match the input */
   cursor: pointer;
   font-weight: 500;
+  font-size: 1.125rem;
+  border-radius: 4px;
 }
 
 .searchButton:hover {
   background-color: #005999;
 }
 
-.emergencyButton {
-  background-color: #FB4D42;
-  color: #fff;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.emergencyButton:hover {
-  background-color: #cc0000;
-}
-
-.placeholderSection {
+.mapSection {
   padding: 1rem;
-  margin-bottom: 1rem;
-}
-
-
-.footer {
-  background-color: #f5f5f5;
-  padding: 1rem 2rem;
-  text-align: center;
-  font-size: 0.875rem;
-  color: #666;
 }
