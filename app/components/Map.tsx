@@ -1,7 +1,6 @@
 "use client";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { GoogleMap } from "@react-google-maps/api";
 
 const defaultCenter = { lat: 42.3601, lng: -71.0589 };
@@ -16,74 +15,65 @@ export interface MarkerData {
 
 interface MapProps {
   markers?: MarkerData[];
+  center?: { lat: number; lng: number }; // New prop for a custom center
 }
 
-export default function Map({ markers = [] }: MapProps) {
+export default function Map({ markers = [], center }: MapProps) {
   const mapRef = useRef<google.maps.Map | null>(null);
-  // Array to hold marker references for cleanup
   const advancedMarkersRef = useRef<any[]>([]);
-  // Reuse a single info window for all markers
   const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   const onMapLoad = (map: google.maps.Map) => {
     mapRef.current = map;
+    setMapLoaded(true);
+    console.log("Map loaded, mapRef set:", map);
   };
 
   useEffect(() => {
-    if (mapRef.current && "importLibrary" in google.maps) {
-      // Clear previous markers from the map
+    console.log("Map effect triggered. Markers:", markers, "MapLoaded:", mapLoaded);
+    if (mapRef.current && mapLoaded && "importLibrary" in google.maps) {
+      console.log("Clearing previous markers:", advancedMarkersRef.current);
       advancedMarkersRef.current.forEach((marker) => marker.setMap(null));
       advancedMarkersRef.current = [];
 
-      // Create a single info window instance (if it doesn't exist)
       if (infoWindowRef.current === null) {
         infoWindowRef.current = new google.maps.InfoWindow();
+        console.log("Created new info window instance.");
       }
 
-      // Import the marker library and create markers
+      console.log("Importing marker library...");
       google.maps
         .importLibrary("marker")
         .then(({ AdvancedMarkerElement }) => {
+          console.log("Marker library imported:", AdvancedMarkerElement);
           markers.forEach((markerData) => {
             const position = {
               lat: markerData.lat || defaultCenter.lat,
               lng: markerData.lng || defaultCenter.lng,
             };
-
-            // Create the advanced marker with gmpClickable set to true.
+            console.log("Creating advanced marker for:", markerData);
             const advancedMarker = new AdvancedMarkerElement({
               map: mapRef.current!,
               position,
               title: markerData.Organization_Name,
               gmpClickable: true,
             });
-
-            // Add a click listener on the marker.
-            advancedMarker.addListener("click", () => {
-              // Close any previously opened info window.
+            advancedMarker.addListener("gmp-click", () => {
+              console.log("Marker clicked:", markerData);
               infoWindowRef.current!.close();
-
-              // Build content for the info window.
               const contentDiv = document.createElement("div");
               contentDiv.style.fontSize = "14px";
               contentDiv.style.lineHeight = "1.5";
-
-              // Add the organization name.
               const nameEl = document.createElement("div");
-              nameEl.textContent =
-                markerData.Organization_Name || "Unknown Organization";
+              nameEl.textContent = markerData.Organization_Name || "Unknown Organization";
               nameEl.style.fontWeight = "bold";
               nameEl.style.marginBottom = "4px";
               contentDiv.appendChild(nameEl);
-
-              // Add the organization address.
               const addrEl = document.createElement("div");
-              addrEl.textContent =
-                markerData.Organization_Address || "Address not available";
+              addrEl.textContent = markerData.Organization_Address || "Address not available";
               addrEl.style.marginBottom = "4px";
               contentDiv.appendChild(addrEl);
-
-              // Add a hyperlink pointing to this marker's detail page.
               const detailLink = document.createElement("a");
               detailLink.href = `/resource/${markerData.id}`;
               detailLink.textContent = "View Details";
@@ -92,38 +82,35 @@ export default function Map({ markers = [] }: MapProps) {
               detailLink.style.color = "#0070f3";
               detailLink.style.textDecoration = "underline";
               contentDiv.appendChild(detailLink);
-
-              // Set the info window content and open it anchored at the marker.
+              console.log("Setting info window content:", contentDiv);
               infoWindowRef.current!.setContent(contentDiv);
               infoWindowRef.current!.open(mapRef.current, advancedMarker);
+              console.log("Opened info window.");
             });
-
-            // Store the marker so we can clear them later if needed.
             advancedMarkersRef.current.push(advancedMarker);
+            console.log("Stored advanced marker:", advancedMarker);
           });
         })
         .catch((error) => {
           console.error("Error importing marker library:", error);
         });
+    } else {
+      console.warn("Map is not loaded yet or google.maps.importLibrary not available.");
     }
-  }, [markers]);
+  }, [markers, mapLoaded]);
 
   return (
     <GoogleMap
       mapContainerStyle={{ width: "100%", height: "400px" }}
       center={
-        markers.length > 0
-          ? {
-              lat: markers[0].lat || defaultCenter.lat,
-              lng: markers[0].lng || defaultCenter.lng,
-            }
-          : defaultCenter
+        // If a center prop is provided, use it. Otherwise, use marker or default center.
+        center || (markers.length > 0 ? { lat: markers[0].lat, lng: markers[0].lng } : defaultCenter)
       }
       zoom={12}
       onLoad={onMapLoad}
-      options={{ mapId: "DEMO_MAP_ID" }} // Replace with your actual Map ID if available
+      options={{ mapId: "DEMO_MAP_ID" }} // Replace with your actual Map ID if available.
     >
-      {/* Markers are attached via the useEffect */}
+      {/* Markers are added via useEffect */}
     </GoogleMap>
   );
 }
