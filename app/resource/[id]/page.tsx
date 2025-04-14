@@ -1,5 +1,6 @@
-'use client';
+"use client";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
@@ -12,8 +13,12 @@ const Map = dynamic(() => import("../../components/Map"), { ssr: false });
 
 export default function ResourceDetailPage() {
   const { id } = useParams(); // Firestore document ID from the URL
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [resource, setResource] = useState<any | null>(null);
-  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
+  const [coordinates, setCoordinates] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
   // Fetch the resource from Firestore.
   useEffect(() => {
@@ -41,7 +46,12 @@ export default function ResourceDetailPage() {
 
   // Geocode the address if resource does not have lat/lng.
   useEffect(() => {
-    if (resource && !resource.lat && !resource.lng && resource.Organization_Address) {
+    if (
+      resource &&
+      !resource.lat &&
+      !resource.lng &&
+      resource.Organization_Address
+    ) {
       console.log("Geocoding address:", resource.Organization_Address);
       geocodeAddress(resource.Organization_Address)
         .then(({ lat, lng }) => {
@@ -55,7 +65,9 @@ export default function ResourceDetailPage() {
   }, [resource]);
 
   // Helper function to geocode an address using the Google Geocoding API.
-  async function geocodeAddress(address: string): Promise<{ lat: number; lng: number }> {
+  async function geocodeAddress(
+    address: string,
+  ): Promise<{ lat: number; lng: number }> {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
     const encoded = encodeURIComponent(address);
     console.log("Calling Geocoding API for address:", address);
@@ -99,7 +111,11 @@ export default function ResourceDetailPage() {
   // Use resource's lat/lng if available; otherwise use geocoded coordinates; otherwise fall back to default Boston coordinates.
   const effectiveLat = lat ?? coordinates?.lat ?? 42.3601;
   const effectiveLng = lng ?? coordinates?.lng ?? -71.0589;
-  console.log("Effective coordinates for detail page:", effectiveLat, effectiveLng);
+  console.log(
+    "Effective coordinates for detail page:",
+    effectiveLat,
+    effectiveLng,
+  );
 
   // Utility for formatting URLs.
   const formatUrl = (url: string) => {
@@ -118,11 +134,15 @@ export default function ResourceDetailPage() {
         <div style={{ display: "flex", gap: "2rem" }}>
           {/* Left column: resource info */}
           <div style={{ flex: 1 }}>
-            <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>Description</h2>
+            <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
+              Description
+            </h2>
             <p style={{ marginBottom: "1rem" }}>
               {Organization_Description || "No description available."}
             </p>
-            <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>Additional Info</h2>
+            <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
+              Additional Info
+            </h2>
             <ul style={{ listStyleType: "disc", marginLeft: "1.5rem" }}>
               <li>
                 <strong>Website:</strong>{" "}
@@ -143,7 +163,7 @@ export default function ResourceDetailPage() {
                 {Organization_Address ? (
                   <a
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                      Organization_Address
+                      Organization_Address,
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -177,13 +197,16 @@ export default function ResourceDetailPage() {
               </li>
               <li>
                 <strong>Neighborhood(s) Served:</strong>{" "}
-                {Neighborhood_Of_Organization_Neighborhoods_Primarily_Served || "N/A"}
+                {Neighborhood_Of_Organization_Neighborhoods_Primarily_Served ||
+                  "N/A"}
               </li>
               <li>
-                <strong>Days/Hours of Operation:</strong> {Days_Hours_Of_Operation || "N/A"}
+                <strong>Days/Hours of Operation:</strong>{" "}
+                {Days_Hours_Of_Operation || "N/A"}
               </li>
               <li>
-                <strong>Program Cost:</strong> {Program_Cost_To_Participant || "N/A"}
+                <strong>Program Cost:</strong>{" "}
+                {Program_Cost_To_Participant || "N/A"}
               </li>
               <li>
                 <strong>Health Insurance Required?:</strong>{" "}
@@ -193,7 +216,9 @@ export default function ResourceDetailPage() {
           </div>
           {/* Right column: map showing only this resource's marker */}
           <div style={{ width: "600px", height: "400px", flexShrink: 0 }}>
-            <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>Location</h2>
+            <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
+              Location
+            </h2>
             {/* 
               Using a key that depends on the resource id and effective coordinates 
               forces the Map to re-mount when these values change—ensuring the marker

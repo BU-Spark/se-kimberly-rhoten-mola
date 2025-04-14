@@ -1,5 +1,6 @@
 "use client";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useEffect, useRef, useState } from "react";
 import { GoogleMap } from "@react-google-maps/api";
 
@@ -20,6 +21,7 @@ interface MapProps {
 
 export default function Map({ markers = [], center }: MapProps) {
   const mapRef = useRef<google.maps.Map | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const advancedMarkersRef = useRef<any[]>([]);
   const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -31,7 +33,12 @@ export default function Map({ markers = [], center }: MapProps) {
   };
 
   useEffect(() => {
-    console.log("Map effect triggered. Markers:", markers, "MapLoaded:", mapLoaded);
+    console.log(
+      "Map effect triggered. Markers:",
+      markers,
+      "MapLoaded:",
+      mapLoaded,
+    );
     if (mapRef.current && mapLoaded && "importLibrary" in google.maps) {
       console.log("Clearing previous markers:", advancedMarkersRef.current);
       advancedMarkersRef.current.forEach((marker) => marker.setMap(null));
@@ -66,7 +73,8 @@ export default function Map({ markers = [], center }: MapProps) {
               contentDiv.style.fontSize = "14px";
               contentDiv.style.lineHeight = "1.5";
               const nameEl = document.createElement("div");
-              nameEl.textContent = markerData.Organization_Name || "Unknown Organization";
+              nameEl.textContent =
+                markerData.Organization_Name || "Unknown Organization";
               nameEl.style.fontWeight = "bold";
               nameEl.style.marginBottom = "4px";
               contentDiv.appendChild(nameEl);
@@ -95,7 +103,9 @@ export default function Map({ markers = [], center }: MapProps) {
           console.error("Error importing marker library:", error);
         });
     } else {
-      console.warn("Map is not loaded yet or google.maps.importLibrary not available.");
+      console.log(
+        "Map is not loaded yet or google.maps.importLibrary not available.",
+      );
     }
   }, [markers, mapLoaded]);
 
@@ -104,11 +114,14 @@ export default function Map({ markers = [], center }: MapProps) {
       mapContainerStyle={{ width: "100%", height: "400px" }}
       center={
         // If a center prop is provided, use it. Otherwise, use marker or default center.
-        center || (markers.length > 0 ? { lat: markers[0].lat, lng: markers[0].lng } : defaultCenter)
+        center ||
+        (markers.length > 0
+          ? { lat: markers[0].lat, lng: markers[0].lng }
+          : defaultCenter)
       }
       zoom={12}
       onLoad={onMapLoad}
-      options={{ mapId: "DEMO_MAP_ID" }} // Replace with your actual Map ID if available.
+      options={{ mapId: "MOLA" }} // Replace with your actual Map ID if available.
     >
       {/* Markers are added via useEffect */}
     </GoogleMap>
