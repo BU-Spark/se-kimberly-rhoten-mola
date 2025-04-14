@@ -33,7 +33,7 @@ body {
 /* globals.css */
 a {
   color: #0070f3;         /* A blue color for links */
-  text-decoration: underline;  /* Underline links to distinguish them from plain text */
+  text-decoration: none;  /* Underline links to distinguish them from plain text */
   transition: color 0.2s ease;   /* Optional: Smooth transition for hover effects */
 }
 

@@ -1,15 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase/configfirebase";
 import dynamic from "next/dynamic";
 import styles from "../../page.module.css";
-import Link from "next/link";
 
-// Dynamically import your Map to ensure it only renders client-side
+// Dynamically import Map to ensure client-side rendering.
 const Map = dynamic(() => import("../../components/Map"), { ssr: false });
 
 export default function ResourceDetailPage() {
@@ -17,30 +15,34 @@ export default function ResourceDetailPage() {
   const [resource, setResource] = useState<any | null>(null);
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
 
-  // Fetch the resource from Firestore
+  // Fetch the resource from Firestore.
   useEffect(() => {
     const fetchResource = async () => {
       try {
+        console.log("Fetching resource for id:", id);
         const docRef = doc(db, "Organizations", id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
+          console.log("Fetched resource:", data);
           setResource(data);
         } else {
-          console.log("No such document in Firestore!");
+          console.log("No such document in Firestore for id:", id);
         }
       } catch (error) {
         console.error("Error fetching resource:", error);
       }
     };
+
     if (id) {
       fetchResource();
     }
   }, [id]);
 
-  // If the resource doesn't have lat/lng but has an address, geocode it
+  // Geocode the address if resource does not have lat/lng.
   useEffect(() => {
     if (resource && !resource.lat && !resource.lng && resource.Organization_Address) {
+      console.log("Geocoding address:", resource.Organization_Address);
       geocodeAddress(resource.Organization_Address)
         .then(({ lat, lng }) => {
           console.log("Geocoded coordinates:", lat, lng);
@@ -52,10 +54,11 @@ export default function ResourceDetailPage() {
     }
   }, [resource]);
 
-  // Helper function to geocode an address using the Google Geocoding API
+  // Helper function to geocode an address using the Google Geocoding API.
   async function geocodeAddress(address: string): Promise<{ lat: number; lng: number }> {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
     const encoded = encodeURIComponent(address);
+    console.log("Calling Geocoding API for address:", address);
     const res = await fetch(
       `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${apiKey}`
     );
@@ -73,10 +76,8 @@ export default function ResourceDetailPage() {
     return <p>Loading resource...</p>;
   }
 
-  // Destructure fields from the resource
+  // Destructure fields from the resource.
   const {
-    Name,
-    Email_Phone_Number,
     Organization_Name,
     Organization_Description,
     Organization_Website,
@@ -94,47 +95,21 @@ export default function ResourceDetailPage() {
     lng,
   } = resource;
 
-  // Determine the effective coordinates: use resource's lat/lng if available; otherwise use geocoded coordinates; otherwise fallback to Boston
+  // Compute effective coordinates:
+  // Use resource's lat/lng if available; otherwise use geocoded coordinates; otherwise fall back to default Boston coordinates.
   const effectiveLat = lat ?? coordinates?.lat ?? 42.3601;
   const effectiveLng = lng ?? coordinates?.lng ?? -71.0589;
-
   console.log("Effective coordinates for detail page:", effectiveLat, effectiveLng);
 
-  // Utility for ensuring the website has a proper protocol
+  // Utility for formatting URLs.
   const formatUrl = (url: string) => {
-    return url.startsWith("http://") || url.startsWith("https://") ? url : `https://${url}`;
+    return url.startsWith("http://") || url.startsWith("https://")
+      ? url
+      : `https://${url}`;
   };
 
   return (
     <div className={styles.container}>
-      {/* HEADER - same as the main page, with clickable link */}
-      <header className={styles.header}>
-        <Link href="/" className={styles.logoArea}>
-          <Image
-            src="/cob_b_white-01.png"
-            alt="City of Boston Logo"
-            width={60}
-            height={60}
-          />
-          <div className={styles.headerText}>
-            <span>Mayor&apos;s Office of LGBTQIA2S+ Advancement</span>
-          </div>
-        </Link>
-        <nav className={styles.navMenu}>
-          <ul>
-            <li>
-              <a href="/database">Database</a>
-            </li>
-            <li>
-              <a href="#">Interactive Map</a>
-            </li>
-            <li>
-              <a href="#">Help</a>
-            </li>
-          </ul>
-        </nav>
-      </header>
-
       {/* MAIN CONTENT */}
       <main className={styles.main} style={{ padding: "2rem" }}>
         <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>
@@ -143,15 +118,11 @@ export default function ResourceDetailPage() {
         <div style={{ display: "flex", gap: "2rem" }}>
           {/* Left column: resource info */}
           <div style={{ flex: 1 }}>
-            <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
-              Description
-            </h2>
-            <p style={{ marginBottom: '1rem' }}>
+            <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>Description</h2>
+            <p style={{ marginBottom: "1rem" }}>
               {Organization_Description || "No description available."}
             </p>
-            <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
-              Additional Info
-            </h2>
+            <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>Additional Info</h2>
             <ul style={{ listStyleType: "disc", marginLeft: "1.5rem" }}>
               <li>
                 <strong>Website:</strong>{" "}
@@ -189,15 +160,14 @@ export default function ResourceDetailPage() {
               <li>
                 <strong>Public Email:</strong>{" "}
                 {Public_Email ? (
-                  <a href={`mailto:${Public_Email}`}>
-                    {Public_Email}
-                  </a>
+                  <a href={`mailto:${Public_Email}`}>{Public_Email}</a>
                 ) : (
                   "N/A"
                 )}
               </li>
               <li>
-                <strong>Preferred Contact:</strong> {Preferred_Method_Of_Organizational_Contact || "N/A"}
+                <strong>Preferred Contact:</strong>{" "}
+                {Preferred_Method_Of_Organizational_Contact || "N/A"}
               </li>
               <li>
                 <strong>Type of Service:</strong> {Type_Of_Service || "N/A"}
@@ -206,7 +176,8 @@ export default function ResourceDetailPage() {
                 <strong>Target Population:</strong> {Target_Population || "N/A"}
               </li>
               <li>
-                <strong>Neighborhood(s) Served:</strong> {Neighborhood_Of_Organization_Neighborhoods_Primarily_Served || "N/A"}
+                <strong>Neighborhood(s) Served:</strong>{" "}
+                {Neighborhood_Of_Organization_Neighborhoods_Primarily_Served || "N/A"}
               </li>
               <li>
                 <strong>Days/Hours of Operation:</strong> {Days_Hours_Of_Operation || "N/A"}
@@ -215,33 +186,34 @@ export default function ResourceDetailPage() {
                 <strong>Program Cost:</strong> {Program_Cost_To_Participant || "N/A"}
               </li>
               <li>
-                <strong>Health Insurance Required?:</strong> {Health_Insurance_Required || "N/A"}
+                <strong>Health Insurance Required?:</strong>{" "}
+                {Health_Insurance_Required || "N/A"}
               </li>
             </ul>
           </div>
-
-          {/* Right column: map showing ONLY this resource's marker */}
+          {/* Right column: map showing only this resource's marker */}
           <div style={{ width: "600px", height: "400px", flexShrink: 0 }}>
-            <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
-              Location
-            </h2>
+            <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>Location</h2>
+            {/* 
+              Using a key that depends on the resource id and effective coordinates 
+              forces the Map to re-mount when these values change—ensuring the marker
+              initialization logic re-runs (exactly as on the main page).
+            */}
             <Map
+              key={`${id}-${effectiveLat}-${effectiveLng}`}
               markers={[
                 {
                   id,
                   lat: effectiveLat,
                   lng: effectiveLng,
                   Organization_Name,
+                  Organization_Address, // Include address so the info window builds like on the main page.
                 },
               ]}
             />
           </div>
         </div>
       </main>
-
-      <footer className={styles.footer}>
-        <p>© 2025 City of Boston. All Rights Reserved.</p>
-      </footer>
     </div>
   );
 }

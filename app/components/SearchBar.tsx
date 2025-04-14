@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { db } from '../../firebase/configfirebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { db } from "../../firebase/configfirebase";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 interface Organization {
   id: string;
@@ -12,7 +12,7 @@ interface Organization {
 
 export default function SearchBar() {
   const router = useRouter();
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [suggestions, setSuggestions] = useState<Organization[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -41,7 +41,7 @@ export default function SearchBar() {
       const q = query(
         orgsRef,
         where("Organization_Name", ">=", text),
-        where("Organization_Name", "<=", text + "\uf8ff")
+        where("Organization_Name", "<=", text + "\uf8ff"),
       );
       const snapshot = await getDocs(q);
       const results: Organization[] = [];
@@ -81,7 +81,9 @@ export default function SearchBar() {
   const handleSuggestionClick = (org: Organization) => {
     setSearchText(org.Organization_Name);
     setShowDropdown(false);
-    router.push(`/database?search=${encodeURIComponent(org.Organization_Name)}`);
+    router.push(
+      `/database?search=${encodeURIComponent(org.Organization_Name)}`,
+    );
   };
 
   // Handle click on a service option from the dropdown.
