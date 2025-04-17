@@ -23,3 +23,17 @@ npm run dev
 5: click around, and try to break what we have!
 
 6: if any bugs are encountered, send to us at stefanjp@bu.edu
+
+***
+
+focus on UI / UX
+split up work via page (map page, detail page)
+make sure ananya commits to repo
+
+****try to allign design with figma as much as possible****
+
+revamp main page
+revamp detail page
+revamp detail display
+
+icons / legend are least priority
