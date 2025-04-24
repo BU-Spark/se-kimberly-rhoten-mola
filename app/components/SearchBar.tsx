@@ -11,7 +11,6 @@ interface Organization {
   Organization_Name: string;
 }
 
-// These are your 9 categories, but you can add or remove as needed.
 const SERVICE_OPTIONS = [
   "Food",
   "Health and Wellness",

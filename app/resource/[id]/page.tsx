@@ -111,11 +111,7 @@ export default function ResourceDetailPage() {
   // Use resource's lat/lng if available; otherwise use geocoded coordinates; otherwise fall back to default Boston coordinates.
   const effectiveLat = lat ?? coordinates?.lat ?? 42.3601;
   const effectiveLng = lng ?? coordinates?.lng ?? -71.0589;
-  console.log(
-    "Effective coordinates for detail page:",
-    effectiveLat,
-    effectiveLng,
-  );
+  console.log("Coordinates for detail page:", effectiveLat, effectiveLng);
 
   // Utility for formatting URLs.
   const formatUrl = (url: string) => {
@@ -128,11 +124,25 @@ export default function ResourceDetailPage() {
     <div className={styles.container}>
       {/* MAIN CONTENT */}
       <main className={styles.main} style={{ padding: "2rem" }}>
-        <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>
+        <h1 style={{ fontSize: "4rem", marginBottom: "1rem" }}>
           {Organization_Name || "Resource Name"}
         </h1>
+        <h2>
+          {Organization_Website ? (
+            <a
+              href={formatUrl(Organization_Website)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {Organization_Website}
+            </a>
+          ) : (
+            "N/A"
+          )}
+        </h2>
+        <br></br>
         <div style={{ display: "flex", gap: "2rem" }}>
-          {/* Left column: resource info */}
+          {/* LEFT COLUMN */}
           <div style={{ flex: 1 }}>
             <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
               Description
@@ -143,82 +153,32 @@ export default function ResourceDetailPage() {
             <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
               Additional Info
             </h2>
-            <ul style={{ listStyleType: "disc", marginLeft: "1.5rem" }}>
-              <li>
-                <strong>Website:</strong>{" "}
-                {Organization_Website ? (
-                  <a
-                    href={formatUrl(Organization_Website)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {Organization_Website}
-                  </a>
-                ) : (
-                  "N/A"
-                )}
-              </li>
-              <li>
-                <strong>Address:</strong>{" "}
-                {Organization_Address ? (
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                      Organization_Address,
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {Organization_Address}
-                  </a>
-                ) : (
-                  "N/A"
-                )}
-              </li>
-              <li>
-                <strong>Public Phone:</strong> {Public_Phone_Number || "N/A"}
-              </li>
-              <li>
-                <strong>Public Email:</strong>{" "}
-                {Public_Email ? (
-                  <a href={`mailto:${Public_Email}`}>{Public_Email}</a>
-                ) : (
-                  "N/A"
-                )}
-              </li>
-              <li>
-                <strong>Preferred Contact:</strong>{" "}
-                {Preferred_Method_Of_Organizational_Contact || "N/A"}
-              </li>
-              <li>
-                <strong>Type of Service:</strong> {Type_Of_Service || "N/A"}
-              </li>
-              <li>
-                <strong>Target Population:</strong> {Target_Population || "N/A"}
-              </li>
-              <li>
-                <strong>Neighborhood(s) Served:</strong>{" "}
-                {Neighborhood_Of_Organization_Neighborhoods_Primarily_Served ||
-                  "N/A"}
-              </li>
-              <li>
-                <strong>Days/Hours of Operation:</strong>{" "}
-                {Days_Hours_Of_Operation || "N/A"}
-              </li>
-              <li>
-                <strong>Program Cost:</strong>{" "}
-                {Program_Cost_To_Participant || "N/A"}
-              </li>
-              <li>
-                <strong>Health Insurance Required?:</strong>{" "}
-                {Health_Insurance_Required || "N/A"}
-              </li>
-            </ul>
+            <strong>Preferred Contact:</strong>{" "}
+            {Preferred_Method_Of_Organizational_Contact || "N/A"}
+            <br></br>
+            <strong>Type of Service:</strong> {Type_Of_Service || "N/A"}
+            <br></br>
+            <strong>Target Population:</strong> {Target_Population || "N/A"}
+            <br></br>
+            <strong>Neighborhood(s) Served:</strong>{" "}
+            {Neighborhood_Of_Organization_Neighborhoods_Primarily_Served ||
+              "N/A"}
+            <br></br>
+            <strong>Program Cost:</strong>{" "}
+            {Program_Cost_To_Participant || "N/A"}
+            <br></br>
+            <strong>Health Insurance Required?:</strong>{" "}
+            {Health_Insurance_Required || "N/A"}
           </div>
-          {/* Right column: map showing only this resource's marker */}
-          <div style={{ width: "600px", height: "400px", flexShrink: 0 }}>
-            <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
-              Location
-            </h2>
+          {/* RIGHT COLUMN */}
+          <div
+            style={{
+              width: "400px",
+              height: "90vh",
+              gap: "2rem",
+              float: "left",
+            }}
+          >
             {/* 
               Using a key that depends on the resource id and effective coordinates 
               forces the Map to re-mount when these values change—ensuring the marker
@@ -236,6 +196,36 @@ export default function ResourceDetailPage() {
                 },
               ]}
             />
+            <br></br>
+            <h2>Contact Information</h2>
+            <strong></strong>{" "}
+            {Organization_Address ? (
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                  Organization_Address,
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {Organization_Address}
+              </a>
+            ) : (
+              "N/A"
+            )}
+            <br></br>
+            <strong></strong> {Public_Phone_Number || "N/A"}
+            <br></br>
+            <strong></strong>{" "}
+            {Public_Email ? (
+              <a href={`mailto:${Public_Email}`}>{Public_Email}</a>
+            ) : (
+              "N/A"
+            )}
+            <br></br>
+            <h2>Days/Hours of Operation:</h2>
+            <strong></strong>
+            {""}
+            {Days_Hours_Of_Operation || "N/A"}
           </div>
         </div>
       </main>
