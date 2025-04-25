@@ -91,7 +91,7 @@
 }
 
 .searchInput {
-  width: 100rem;
+  width: 40vw;
   min-height: 3rem;       /* ensures the input is at least 3rem tall */
   padding: 1.5rem 0.75rem; /* vertical padding increased to make it thicker */
   margin-right: 0.5rem;
@@ -104,7 +104,7 @@
   background-color: #45789C;
   color: #fff;
   border: none;
-  padding: 1.5rem 1.25rem;  /* increase vertical padding to match the input */
+  padding: 1.5rem 1.25rem;
   cursor: pointer;
   font-weight: 500;
   font-size: 1.125rem;
@@ -117,4 +117,94 @@
 
 .mapSection {
   padding: 1rem;
+}
+
+.mapTeaser {
+  border-top: 6px solid #000;
+  margin: 50px;
+  padding: 0rem 20% 0rem 2rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 0rem;
+}
+
+.mapTeaserDesc {
+  padding: 1rem 10% 3rem;
+  font-style: italic;
+  margin-left: -3rem;
+  margin-top: 1rem;
+  font-style: italic;
+  text-align: left;
+}
+
+.mapTeaserTitle {
+  margin: 0 0 0.75rem 0;
+  align-self: left;
+  margin-left: 3rem;
+  margin-top: 2rem;
+  margin-bottom: -2rem;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.mapTeaserBtn {
+  flex-shrink: 0;
+  background: #267dc9;
+  color: #fff;
+  padding: 0.9rem 1.75rem;
+  font-weight: 1000;
+  font-size: 1.1rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: rem;
+  transition: background 0.2s ease-in-out;
+}
+.mapTeaserBtn:hover {
+  background: #206caf;
+}
+
+/* -------------  /map specific ------------- */
+
+.mapPage {                     /* whole viewport minus any fixed header */
+  display: flex;
+  height: 100vh; 
+  overflow: hidden;
+}
+
+/* left column – list */
+.resultsPanel {
+  width: 360px;                /* tweak to taste */
+  max-width: 100%;
+  overflow-y: auto;
+  background: #fff;
+  border-right: 1px solid #e5e5e5;
+  padding: 1.25rem 1.5rem;
+  box-sizing: border-box;
+}
+
+/* right column – map */
+.mapPanel {
+  flex: 1;
+  position: relative;          /* lets us absolutely-place children */
+}
+
+/* floating SearchBar */
+.floatingSearch {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;                  /* make sure it’s above the Google map */
+  width: 65%;
+  max-width: 640px;
+  min-width: 280px;
+}
+
+/* ensure <Map /> fills its cell */
+.fullHeightMap {
+  height: 100%;
 }

@@ -1,3 +1,4 @@
+// components/ResourceList.tsx
 'use client';
 
 import Link from 'next/link';
@@ -6,7 +7,7 @@ interface Resource {
   id: string;
   Organization_Name?: string;
   Organization_Description?: string;
-  // ...any other fields
+  Organization_Address?: string;
 }
 
 interface ResourceListProps {
@@ -20,22 +21,52 @@ export default function ResourceList({ resources }: ResourceListProps) {
 
   return (
     <div style={{ marginTop: '1rem' }}>
-      <p>Showing {resources.length} result(s)</p>
-      {resources.map((res) => (
-        <div
-          key={res.id}
-          style={{ border: '1px solid #ccc', padding: '1rem', marginBottom: '1rem' }}
-        >
-          <h3>
-            <Link href={`/resource/${res.id}`}>
-              {/* Display resource name or fallback */}
-              {res.Organization_Name || 'Unnamed Resource'}
-            </Link>
-          </h3>
-          {/* Show a short snippet of the description */}
-          <p>{res.Organization_Description || 'No description available.'}</p>
-        </div>
-      ))}
+      {/* result count */}
+      <p style={{ marginBottom: '1rem', fontWeight: 'bold' }}>
+        Showing {resources.length} result(s)
+      </p>
+
+      {resources.map((res, idx) => {
+        const isLast = idx === resources.length - 1;
+        return (
+          <div
+            key={res.id}
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              padding: '1rem 0',
+              borderBottom: isLast ? 'none' : '1px solid #ccc',
+            }}
+          >
+            {/* left column */}
+            <div style={{ flex: 1 }}>
+              <h3 style={{ margin: '0 0 0.5rem 0' }}>
+                <Link href={`/resource/${res.id}`}>
+                  {res.Organization_Name || 'Unnamed Resource'}
+                </Link>
+              </h3>
+              <p style={{ margin: 0, color: '#555' }}>
+                {res.Organization_Description || 'No description available.'}
+              </p>
+            </div>
+
+            {/* right column */}
+            {res.Organization_Address && (
+              <div
+                style={{
+                  marginLeft: '2rem',
+                  minWidth: '200px',
+                  textAlign: 'right',
+                  color: '#333',
+                }}
+              >
+                <p style={{ margin: 0 }}>{res.Organization_Address}</p>
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
