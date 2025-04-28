@@ -12,7 +12,6 @@ const ALL_SERVICES = [
   "STI/HIV Support",
   "Therapeutic Support",
   "Trans Health and Social Services",
-  // …etc
 ];
 
 export default function MapSearchBar({

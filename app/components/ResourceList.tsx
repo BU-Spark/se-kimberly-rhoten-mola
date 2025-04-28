@@ -1,7 +1,7 @@
 // components/ResourceList.tsx
-'use client';
+"use client";
 
-import Link from 'next/link';
+import Link from "next/link";
 
 interface Resource {
   id: string;
@@ -20,9 +20,9 @@ export default function ResourceList({ resources }: ResourceListProps) {
   }
 
   return (
-    <div style={{ marginTop: '1rem' }}>
+    <div style={{ marginTop: "1rem" }}>
       {/* result count */}
-      <p style={{ marginBottom: '1rem', fontWeight: 'bold' }}>
+      <p style={{ marginBottom: "1rem", fontWeight: "bold" }}>
         Showing {resources.length} result(s)
       </p>
 
@@ -32,22 +32,22 @@ export default function ResourceList({ resources }: ResourceListProps) {
           <div
             key={res.id}
             style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              padding: '1rem 0',
-              borderBottom: isLast ? 'none' : '1px solid #ccc',
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              padding: "1rem 0",
+              borderBottom: isLast ? "none" : "1px solid #ccc",
             }}
           >
             {/* left column */}
             <div style={{ flex: 1 }}>
-              <h3 style={{ margin: '0 0 0.5rem 0' }}>
+              <h3 style={{ margin: "0 0 0.5rem 0" }}>
                 <Link href={`/resource/${res.id}`}>
-                  {res.Organization_Name || 'Unnamed Resource'}
+                  {res.Organization_Name || "Unnamed Resource"}
                 </Link>
               </h3>
-              <p style={{ margin: 0, color: '#555' }}>
-                {res.Organization_Description || 'No description available.'}
+              <p style={{ margin: 0, color: "#555" }}>
+                {res.Organization_Description || "No description available."}
               </p>
             </div>
 
@@ -55,10 +55,10 @@ export default function ResourceList({ resources }: ResourceListProps) {
             {res.Organization_Address && (
               <div
                 style={{
-                  marginLeft: '2rem',
-                  minWidth: '200px',
-                  textAlign: 'right',
-                  color: '#333',
+                  marginLeft: "2rem",
+                  minWidth: "200px",
+                  textAlign: "right",
+                  color: "#333",
                 }}
               >
                 <p style={{ margin: 0 }}>{res.Organization_Address}</p>

@@ -9,12 +9,6 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/configfirebase";
 import Link from "next/link";
 
-interface Organization {
-  id: string;
-  Organization_Name: string;
-  Type_Of_Service?: string;
-  [key: string]: any;
-}
 interface MarkerData {
   id: string;
   lat: number;
@@ -131,7 +125,7 @@ export default function Home() {
           </p>
           <SearchBar onFilter={handleFilter} />
         </section>
-        <section>
+        <section className={styles.mapTeaser}>
           <div className={styles.mapTeaserText}>
             <h1 className={styles.mapTeaserTitle}>MAP</h1>
             <section className={styles.mapTeaser}>

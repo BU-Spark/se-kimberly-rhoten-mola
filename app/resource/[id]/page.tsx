@@ -153,9 +153,6 @@ export default function ResourceDetailPage() {
             <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
               Additional Info
             </h2>
-            <strong>Preferred Contact:</strong>{" "}
-            {Preferred_Method_Of_Organizational_Contact || "N/A"}
-            <br></br>
             <strong>Type of Service:</strong> {Type_Of_Service || "N/A"}
             <br></br>
             <strong>Target Population:</strong> {Target_Population || "N/A"}
@@ -198,7 +195,10 @@ export default function ResourceDetailPage() {
             />
             <br></br>
             <h2>Contact Information</h2>
-            <strong></strong>{" "}
+            <strong>Preferred Contact:</strong>{" "}
+            {Preferred_Method_Of_Organizational_Contact || "N/A"}
+            <br></br>
+            <strong>Address:</strong>{" "}
             {Organization_Address ? (
               <a
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
@@ -213,9 +213,9 @@ export default function ResourceDetailPage() {
               "N/A"
             )}
             <br></br>
-            <strong></strong> {Public_Phone_Number || "N/A"}
+            <strong>Phone Number:</strong> {Public_Phone_Number || "N/A"}
             <br></br>
-            <strong></strong>{" "}
+            <strong>Email:</strong>{" "}
             {Public_Email ? (
               <a href={`mailto:${Public_Email}`}>{Public_Email}</a>
             ) : (
@@ -225,7 +225,7 @@ export default function ResourceDetailPage() {
             <h2>Days/Hours of Operation:</h2>
             <strong></strong>
             {""}
-            {Days_Hours_Of_Operation || "N/A"}
+            {Days_Hours_Of_Operation || "Contact for Info"}
           </div>
         </div>
       </main>

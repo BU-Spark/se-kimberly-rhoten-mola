@@ -1,13 +1,14 @@
 "use client";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { db } from "../../firebase/configfirebase";
 import { collection, getDocs } from "firebase/firestore";
 import ResourceList from "../components/ResourceList";
-import SearchBar from "../components/SearchBar";
+import MapSearchBar from "../components/MapSearchBar";
 import styles from "../page.module.css";
+import Fuse from "fuse.js";
 
 interface Organization {
   id: string;
@@ -27,6 +28,42 @@ export default function DatabasePage() {
   const searchParams = useSearchParams();
   const searchText = searchParams.get("search") || "";
   const filtersParam = searchParams.get("filters") || ""; // e.g. "Food,Hotlines"
+
+  const [allOrgs, setAllOrgs] = useState<Org[]>([]);
+  const [filtered, setFiltered] = useState<Org[]>([]);
+  const [markers, setMarkers] = useState<MarkerData[]>([]);
+
+  const fuse = useMemo(() => {
+    if (!allOrgs.length) return null;
+    return new Fuse(allOrgs, {
+      keys: [
+        { name: "Organization_Name", weight: 0.7 },
+        { name: "Organization_Address", weight: 0.3 },
+        { name: "Type_Of_Service", weight: 0.4 },
+      ],
+      threshold: 0.4,
+      includeScore: false,
+    });
+  }, [allOrgs]);
+
+  const handleFilter = ({
+    text,
+    category,
+  }: {
+    text: string;
+    category?: string;
+  }) => {
+    if (!text && !category) {
+      setFiltered(allOrgs);
+      return;
+    }
+    const fuseResults =
+      text && fuse ? fuse.search(text).map((r) => r.item) : allOrgs;
+    const final = category
+      ? fuseResults.filter((org) => org.Type_Of_Service === category)
+      : fuseResults;
+    setFiltered(final);
+  };
 
   useEffect(() => {
     // Fetch all resources once on load.
@@ -111,8 +148,7 @@ export default function DatabasePage() {
 
         {/* Passing handleFilter if you wish, 
             but the primary logic is driven by the query params + the updated SearchBar now. */}
-        <SearchBar onFilter={() => {}} />
-
+        <MapSearchBar onFilter={handleFilter} />
         {/* The ResourceList only shows "filteredResources" now. */}
         <ResourceList resources={filteredResources} />
       </main>
