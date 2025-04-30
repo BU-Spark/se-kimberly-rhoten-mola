@@ -30,7 +30,7 @@ async function geocodeAddress(
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const encoded = encodeURIComponent(address);
   const res = await fetch(
-    `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${apiKey}`
+    `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${apiKey}`,
   );
   const data = await res.json();
   console.log("Geocoding API response for address:", address, data);
@@ -125,7 +125,7 @@ export default function Home() {
           </p>
           <SearchBar onFilter={handleFilter} />
         </section>
-        <section className={styles.mapTeaser}>
+        <section>
           <div className={styles.mapTeaserText}>
             <h1 className={styles.mapTeaserTitle}>MAP</h1>
             <section className={styles.mapTeaser}>
@@ -144,6 +144,7 @@ export default function Home() {
             apiKey={apiKey}
             markers={markers}
             center={downtownBostonCenter}
+            height="400px"
           />
         </section>
       </main>

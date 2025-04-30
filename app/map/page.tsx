@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styles from "../page.module.css";
 import Map from "../components/Map";
 import MapSearchBar from "../components/MapSearchBar";
@@ -118,41 +118,43 @@ export default function MapPage() {
     });
   }, [allOrgs]);
 
-  const handleFilter = ({
-    text,
-    category,
-  }: {
-    text: string;
-    category?: string;
-  }) => {
-    if (!text && !category) {
-      setFiltered(allOrgs);
-      return;
-    }
-    const fuseResults =
-      text && fuse ? fuse.search(text).map((r) => r.item) : allOrgs;
-    const final = category
-      ? fuseResults.filter((org) => org.Type_Of_Service === category)
-      : fuseResults;
-    setFiltered(final);
-  };
+  const handleFilter = useCallback(
+    ({ text, category }: { text: string; category?: string }) => {
+      if (!text && !category) {
+        setFiltered(allOrgs);
+        return;
+      }
+      const fuseResults =
+        text && fuse ? fuse.search(text).map((r) => r.item) : allOrgs;
+      const final = category
+        ? fuseResults.filter((org) => org.Type_Of_Service === category)
+        : fuseResults;
+      setFiltered(final);
+    },
+    [allOrgs, fuse],
+  );
 
   return (
     <main className={styles.mapPage}>
-      {/* ------------  LEFT: list/results  ------------ */}
       <aside className={styles.resultsPanel}>
         <h2 style={{ marginTop: 0 }}>Showing {filtered.length} results</h2>
         <ResourceList resources={filtered} />
       </aside>
 
-      {/* ------------  RIGHT: map  ------------ */}
       <section className={styles.mapPanel}>
-        {/* floating search bar */}
         <div className={styles.floatingSearch}>
           <MapSearchBar onFilter={handleFilter} />
         </div>
 
-        <Map apiKey={apiKey} markers={markers} center={downtownBostonCenter} />
+        {/* 💡 full-height wrapper */}
+        <div className={styles.fullHeightMap}>
+          <Map
+            apiKey={apiKey}
+            markers={markers}
+            center={downtownBostonCenter}
+            style={{ height: "100%", width: "100%" }}   // make the canvas stretch
+          />
+        </div>
       </section>
     </main>
   );

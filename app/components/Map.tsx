@@ -16,10 +16,15 @@ export interface MarkerData {
 
 interface MapProps {
   markers?: MarkerData[];
-  center?: { lat: number; lng: number }; // New prop for a custom center
+  center?: { lat: number; lng: number };
+  height?: string | number;
 }
 
-export default function Map({ markers = [], center }: MapProps) {
+export default function Map({
+  markers = [],
+  center,
+  height = "100%",
+}: MapProps) {
   const mapRef = useRef<google.maps.Map | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const advancedMarkersRef = useRef<any[]>([]);
@@ -111,7 +116,7 @@ export default function Map({ markers = [], center }: MapProps) {
 
   return (
     <GoogleMap
-      mapContainerStyle={{ width: "100%", height: "400px" }}
+      mapContainerStyle={{ width: "100%", height }}
       center={
         // If a center prop is provided, use it. Otherwise, use marker or default center.
         center ||

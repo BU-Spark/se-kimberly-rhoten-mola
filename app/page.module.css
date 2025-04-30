@@ -115,10 +115,6 @@
   background-color: #005999;
 }
 
-.mapSection {
-  padding: 1rem;
-}
-
 .mapTeaser {
   border-top: 6px solid #000;
   margin: 50px;
@@ -169,15 +165,14 @@
 
 /* -------------  /map specific ------------- */
 
-.mapPage {                     /* whole viewport minus any fixed header */
+.mapPage {
   display: flex;
   height: 100vh; 
   overflow: hidden;
 }
 
-/* left column – list */
 .resultsPanel {
-  width: 360px;                /* tweak to taste */
+  width: 360px;
   max-width: 100%;
   overflow-y: auto;
   background: #fff;
@@ -186,25 +181,25 @@
   box-sizing: border-box;
 }
 
-/* right column – map */
 .mapPanel {
   flex: 1;
-  position: relative;          /* lets us absolutely-place children */
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
-/* floating SearchBar */
 .floatingSearch {
   position: absolute;
   top: 1rem;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 5;                  /* make sure it’s above the Google map */
+  z-index: 5;
   width: 65%;
   max-width: 640px;
   min-width: 280px;
 }
 
-/* ensure <Map /> fills its cell */
 .fullHeightMap {
+  flex: 1;
   height: 100%;
 }

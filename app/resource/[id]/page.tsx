@@ -72,7 +72,7 @@ export default function ResourceDetailPage() {
     const encoded = encodeURIComponent(address);
     console.log("Calling Geocoding API for address:", address);
     const res = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${apiKey}`
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${apiKey}`,
     );
     const data = await res.json();
     console.log("Geocoding API response:", data);
@@ -192,6 +192,7 @@ export default function ResourceDetailPage() {
                   Organization_Address, // Include address so the info window builds like on the main page.
                 },
               ]}
+              height="400px"
             />
             <br></br>
             <h2>Contact Information</h2>
