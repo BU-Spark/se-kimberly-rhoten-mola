@@ -2,7 +2,7 @@
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase/configfirebase";
 import dynamic from "next/dynamic";
@@ -12,6 +12,7 @@ import styles from "../../page.module.css";
 const Map = dynamic(() => import("../../components/Map"), { ssr: false });
 
 export default function ResourceDetailPage() {
+  const router = useRouter();
   const { id } = useParams(); // Firestore document ID from the URL
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [resource, setResource] = useState<any | null>(null);
@@ -124,6 +125,21 @@ export default function ResourceDetailPage() {
     <div className={styles.container}>
       {/* MAIN CONTENT */}
       <main className={styles.main} style={{ padding: "2rem" }}>
+        <button
+          onClick={() => router.back()}
+          style={{
+            background: "none",
+            border: "none",
+            color: "#1871BD",
+            cursor: "pointer",
+            fontSize: "2rem",
+            padding: 0,
+            alignSelf: "flex-start",
+            width: "auto",
+          }}
+        >
+          ←
+        </button>
         <h1 style={{ fontSize: "4rem", marginBottom: "1rem" }}>
           {Organization_Name || "Resource Name"}
         </h1>

@@ -23,6 +23,9 @@ export default function Header() {
           <li>
             <Link href="/database">Database</Link>
           </li>
+          <li>
+            <a href="mailto:lgbtq@boston.gov">Feedback</a>
+          </li>
         </ul>
       </nav>
     </header>
