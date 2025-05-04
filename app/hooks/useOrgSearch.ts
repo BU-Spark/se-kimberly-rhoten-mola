@@ -1,4 +1,13 @@
 // hooks/useOrgSearch.ts
+
+/**
+ * useOrgSearch
+ * 
+ * Custom React hook to provide fuzzy search for organizations.
+ * Fetches all organizations from Firestore on mount, builds a Fuse.js index,
+ * and exposes a query function for live search suggestions.
+ */
+
 import { useEffect, useMemo, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import Fuse from "fuse.js";

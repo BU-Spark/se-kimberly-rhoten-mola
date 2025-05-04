@@ -1,12 +1,23 @@
 // components/SearchBar.tsx
 "use client";
+
+/**
+ * SearchBar.tsx
+ * 
+ * Provides a search input with live suggestions for organizations.
+ * Uses Fuse.js for fuzzy search and navigates to resource or database pages.
+ * 
+ * Props:
+ *   - onFilter: callback for live filtering (optional, used in /database)
+ */
+
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useOrgSearch, OrgLite } from "../hooks/useOrgSearch";
 import s from "./SearchBar.module.css";
 console.log("[SearchBar] CSS keys:", Object.keys(s));
 
-export default function SearchBar() {
+export default function SearchBar({ onFilter }: { onFilter?: (opts: { text?: string }) => void } = {}) {
   const router = useRouter();
   const { query } = useOrgSearch();
 
@@ -36,6 +47,7 @@ export default function SearchBar() {
     setSuggestions(hits);
     setHighlighted(0);
     console.log(`[SearchBar] suggestions set (${hits.length})`);
+    if (onFilter) onFilter({ text: v });
   }
 
   /* ---------- apply / go ---------- */
