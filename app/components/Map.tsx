@@ -2,11 +2,11 @@
 
 /**
  * Map.tsx
- * 
+ *
  * Renders a Google Map with advanced markers for each resource.
  * Markers are created using the Google Maps "AdvancedMarkerElement" API.
  * When a marker is clicked, an info window appears with resource details and a link.
- * 
+ *
  * Props:
  *   - markers: Array of marker data (id, lat, lng, name, address)
  *   - center: Optional map center
@@ -73,7 +73,9 @@ export default function Map({
         .importLibrary("marker")
         .then((lib) => {
           // Type assertion to satisfy TypeScript
-          const { AdvancedMarkerElement } = lib as { AdvancedMarkerElement: typeof google.maps.marker.AdvancedMarkerElement };
+          const { AdvancedMarkerElement } = lib as {
+            AdvancedMarkerElement: typeof google.maps.marker.AdvancedMarkerElement;
+          };
           markers.forEach((markerData) => {
             const position = {
               lat: markerData.lat || defaultCenter.lat,
@@ -100,7 +102,8 @@ export default function Map({
               nameEl.style.marginBottom = "4px";
               contentDiv.appendChild(nameEl);
               const addrEl = document.createElement("div");
-              addrEl.textContent = markerData.Organization_Address || "Address not available";
+              addrEl.textContent =
+                markerData.Organization_Address || "Address not available";
               addrEl.style.marginBottom = "4px";
               contentDiv.appendChild(addrEl);
               const detailLink = document.createElement("a");

@@ -37,7 +37,7 @@ async function geocodeAddress(
   if (norm === "n/a" || norm === "virtual" || norm === "") {
     return { lat: 42.3601, lng: -71.0589 }; // Boston fallback
   }
-  const apiKey  = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const encoded = encodeURIComponent(address);
   const res = await fetch(
     `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${apiKey}`,
