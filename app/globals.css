@@ -1,3 +1,6 @@
+/* app/globals.css */
+/* baseline reset + colour‑scheme */
+ 
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -9,6 +12,8 @@
     --foreground: #ededed;
   }
 }
+
+/* 2. Global element reset / base styles */
 
 html,
 body {
@@ -29,13 +34,14 @@ body {
   margin: 0;
 }
 
-/* globals.css */
+/* 3. Global <a> link styles */
+
+
 a {
   color: #0070f3;
   text-decoration: none;
   transition: color 0.2s ease;
 }
-
 a:hover,
 a:focus {
   color: #0055aa;

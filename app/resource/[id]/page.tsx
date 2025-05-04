@@ -1,3 +1,8 @@
+// app/resource/[id]/page.tsx
+
+//Given a Firestore document ID in the dynamic route `[id]`, fetches the full
+//organisation record, and displays all of the neccessary data.
+
 "use client";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -8,12 +13,13 @@ import { db } from "../../../firebase/configfirebase";
 import dynamic from "next/dynamic";
 import styles from "../../page.module.css";
 
-// Dynamically import Map to ensure client-side rendering.
+// Lazily load the Map component on the client only
 const Map = dynamic(() => import("../../components/Map"), { ssr: false });
 
 export default function ResourceDetailPage() {
-  const router = useRouter();
+  const router = useRouter(); // Routing help (back button)
   const { id } = useParams(); // Firestore document ID from the URL
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [resource, setResource] = useState<any | null>(null);
   const [coordinates, setCoordinates] = useState<{
@@ -45,7 +51,7 @@ export default function ResourceDetailPage() {
     }
   }, [id]);
 
-  // Geocode the address if resource does not have lat/lng.
+  // Geocode the address
   useEffect(() => {
     if (
       resource &&
@@ -86,7 +92,7 @@ export default function ResourceDetailPage() {
   }
 
   if (!resource) {
-    return <p>Loading resource...</p>;
+    return <p>Loading resource...</p>; //if loading, show this
   }
 
   // Destructure fields from the resource.
@@ -121,10 +127,12 @@ export default function ResourceDetailPage() {
       : `https://${url}`;
   };
 
+  // Render
   return (
     <div className={styles.container}>
       {/* MAIN CONTENT */}
       <main className={styles.main} style={{ padding: "2rem" }}>
+        {/* back button navigation */}
         <button
           onClick={() => router.back()}
           style={{
@@ -140,6 +148,8 @@ export default function ResourceDetailPage() {
         >
           ←
         </button>
+
+        {/* Heading + website */}
         <h1 style={{ fontSize: "4rem", marginBottom: "1rem" }}>
           {Organization_Name || "Resource Name"}
         </h1>
@@ -160,12 +170,14 @@ export default function ResourceDetailPage() {
         <div style={{ display: "flex", gap: "2rem" }}>
           {/* LEFT COLUMN */}
           <div style={{ flex: 1 }}>
+            {/* Description */}
             <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
               Description
             </h2>
             <p style={{ marginBottom: "1rem" }}>
               {Organization_Description || "No description available."}
             </p>
+            {/* Additional Info */}
             <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
               Additional Info
             </h2>
@@ -211,6 +223,7 @@ export default function ResourceDetailPage() {
               height="400px"
             />
             <br></br>
+            {/* Contact Information */}
             <h2>Contact Information</h2>
             <strong>Preferred Contact:</strong>{" "}
             {Preferred_Method_Of_Organizational_Contact || "N/A"}

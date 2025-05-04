@@ -1,8 +1,11 @@
 // hooks/useOrgSearch.ts
+// One‑time Firestore fetch of *just* the id + name for every org
+// Memoised Fuse.js index (leve 0: name only) for typo‑tolerant search.
+
 import { useEffect, useMemo, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import Fuse from "fuse.js";
-import { db } from "../../firebase/configfirebase"; // <-- adjust if alias differs
+import { db } from "../../firebase/configfirebase";
 
 export interface OrgLite {
   id: string;
@@ -12,13 +15,13 @@ export interface OrgLite {
 export function useOrgSearch() {
   const [orgs, setOrgs] = useState<OrgLite[]>([]);
 
-  /* ───────────── fetch once on mount ───────────── */
+  /* Fetch once on mount */
   useEffect(() => {
     async function load() {
       console.log("[useOrgSearch] fetching Organizations …");
       try {
         const snap = await getDocs(collection(db, "Organizations"));
-        const data = snap.docs.map(d => ({
+        const data = snap.docs.map((d) => ({
           id: d.id,
           name: d.data().Organization_Name,
         }));
@@ -31,18 +34,18 @@ export function useOrgSearch() {
     load();
   }, []);
 
-  /* ───────────── build Fuse index whenever list changes ───────────── */
+  /* Build Fuse index whenever list changes */
   const fuse = useMemo(() => {
     console.log("[useOrgSearch] building Fuse index");
     return new Fuse(orgs, {
       keys: ["name"],
       threshold: 0.3,
       ignoreLocation: true,
-      includeScore: true,        // easier to inspect
+      includeScore: true,
     });
   }, [orgs]);
 
-  /* ───────────── public query fn ───────────── */
+  /* Public query function */
   function query(text: string): OrgLite[] {
     console.log(`[useOrgSearch] query("${text}")`);
     if (!text.trim()) return [];

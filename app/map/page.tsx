@@ -1,5 +1,11 @@
+// app/map/page.tsx
+// Full‑screen map + results panel
+// Fuse.js fuzzy search across name / address / service type
+// Live two‑column layout (results list + Google Map)
+
 "use client";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styles from "../page.module.css";
 import Map from "../components/Map";
@@ -16,26 +22,22 @@ interface MarkerData {
   Organization_Name?: string;
   Organization_Address?: string;
 }
-
 interface Org {
   id: string;
   Organization_Name: string;
   Organization_Address?: string;
   Type_Of_Service?: string;
-  // …any other fields you care about…
 }
 
+// Google Geocode Function
 async function geocodeAddress(
   address: string,
 ): Promise<{ lat: number; lng: number }> {
-  const normalized = address.toLowerCase().trim();
-  if (normalized === "n/a" || normalized === "virtual" || normalized === "") {
-    console.log(
-      `Address "${address}" is not valid; using fallback coordinates.`,
-    );
-    return { lat: 42.3601, lng: -71.0589 };
+  const norm = address.toLowerCase().trim();
+  if (norm === "n/a" || norm === "virtual" || norm === "") {
+    return { lat: 42.3601, lng: -71.0589 }; // Boston fallback
   }
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const apiKey  = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const encoded = encodeURIComponent(address);
   const res = await fetch(
     `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${apiKey}`,
@@ -43,68 +45,52 @@ async function geocodeAddress(
   const data = await res.json();
   if (data.status === "OK" && data.results.length > 0) {
     return data.results[0].geometry.location;
-  } else {
-    console.error(
-      "Geocoding error for address:",
-      address,
-      data.error_message || data.status,
-    );
-    return { lat: 42.3601, lng: -71.0589 };
   }
+  console.error("Geocoding error:", data.error_message || data.status);
+  return { lat: 42.3601, lng: -71.0589 };
 }
 
+// Convert a Firestore doc -> MarkerData
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function geocodeAddressIfNeeded(docData: any): Promise<MarkerData> {
-  if (docData.Organization_Address) {
-    try {
-      const result = await geocodeAddress(docData.Organization_Address);
-      return {
-        id: docData.id,
-        lat: result.lat,
-        lng: result.lng,
-        Organization_Name: docData.Organization_Name,
-        Organization_Address: docData.Organization_Address,
-      };
-    } catch (error) {
-      console.error(
-        "Error geocoding address for doc:",
-        docData.Organization_Address,
-        error,
-      );
-    }
-  }
+async function orgToMarker(docData: any): Promise<MarkerData> {
+  const { Organization_Address = "" } = docData;
+  const { lat, lng } = await geocodeAddress(Organization_Address);
   return {
     id: docData.id,
-    lat: 42.3601,
-    lng: -71.0589,
+    lat,
+    lng,
     Organization_Name: docData.Organization_Name,
-    Organization_Address: docData.Organization_Address,
+    Organization_Address,
   };
 }
 
+// Static config
+
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-const downtownBostonCenter = { lat: 42.355, lng: -71.0656 }; // Coordinates for downtown Boston
+const downtownBostonCenter = { lat: 42.355, lng: -71.0656 };
+
+// Component
 
 export default function MapPage() {
   const [allOrgs, setAllOrgs] = useState<Org[]>([]);
   const [filtered, setFiltered] = useState<Org[]>([]);
   const [markers, setMarkers] = useState<MarkerData[]>([]);
 
+  // Fetch + geocode everything once
   useEffect(() => {
     const fetchData = async () => {
       const snap = await getDocs(collection(db, "Organizations"));
-      const docs = snap.docs.map((d) => {
-          return ({ id: d.id, ...(d.data() as Org) });
-      });
+      const docs = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Org) }));
       setAllOrgs(docs);
       setFiltered(docs);
 
-      const geo = await Promise.all(docs.map(geocodeAddressIfNeeded));
+      const geo = await Promise.all(docs.map(orgToMarker));
       setMarkers(geo);
     };
     fetchData();
   }, []);
 
+  // Fuse.js instance (memoised)
   const fuse = useMemo(() => {
     if (!allOrgs.length) return null;
     return new Fuse(allOrgs, {
@@ -118,41 +104,44 @@ export default function MapPage() {
     });
   }, [allOrgs]);
 
+  // Search/filter callback passed to <MapSearchBar>
   const handleFilter = useCallback(
     ({ text, category }: { text: string; category?: string }) => {
       if (!text && !category) {
         setFiltered(allOrgs);
         return;
       }
-      const fuseResults =
+      const fuzzed =
         text && fuse ? fuse.search(text).map((r) => r.item) : allOrgs;
       const final = category
-        ? fuseResults.filter((org) => org.Type_Of_Service === category)
-        : fuseResults;
+        ? fuzzed.filter((o) => o.Type_Of_Service === category)
+        : fuzzed;
       setFiltered(final);
     },
     [allOrgs, fuse],
   );
 
+  // Render
+
   return (
     <main className={styles.mapPage}>
+      {/* Results list */}
       <aside className={styles.resultsPanel}>
         <h2 style={{ marginTop: 0 }}>Showing {filtered.length} results</h2>
         <ResourceList resources={filtered} />
       </aside>
 
+      {/* Map */}
       <section className={styles.mapPanel}>
         <div className={styles.floatingSearch}>
           <MapSearchBar onFilter={handleFilter} />
         </div>
-
-        {/* 💡 full-height wrapper */}
         <div className={styles.fullHeightMap}>
           <Map
             apiKey={apiKey}
             markers={markers}
             center={downtownBostonCenter}
-            style={{ height: "100%", width: "100%" }}   // make the canvas stretch
+            style={{ height: "100%", width: "100%" }}
           />
         </div>
       </section>

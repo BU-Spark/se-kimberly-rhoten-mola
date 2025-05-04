@@ -1,4 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// eslint-disable @typescript-eslint/no-explicit-any
+// app/database/page.tsx
+// Filterable table view of all organisations
+// Fuse.js index for typo‑tolerant free‑text search on name + address.
+
 "use client";
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { db } from "../../firebase/configfirebase";
@@ -7,7 +15,6 @@ import ResourceList from "../components/ResourceList";
 import SearchBar from "../components/SearchBar";
 import styles from "../page.module.css";
 import Fuse from "fuse.js";
-import Link from "next/link";  
 
 interface Organization {
   id: string;
@@ -20,14 +27,18 @@ interface Organization {
 export default function DatabasePage() {
   const router = useRouter();
   const [allResources, setAllResources] = useState<Organization[]>([]);
-  const [filteredResources, setFilteredResources] = useState<Organization[]>([]);
+  const [filteredResources, setFilteredResources] = useState<Organization[]>(
+    [],
+  );
 
-  /* ---------------- query-param helpers ---------------- */
+  // URL query helpers
+
   const searchParams = useSearchParams();
   const searchText = searchParams.get("search") ?? "";
   const filtersParam = searchParams.get("filters") ?? "";
 
-  /* ---------------- fuse index ---------------- */
+  // fuse index
+
   const fuse = useMemo(
     () =>
       new Fuse(allResources, {
@@ -40,21 +51,22 @@ export default function DatabasePage() {
     [allResources],
   );
 
-  /* ---------------- fetch once ---------------- */
+  // fetch firestore once
   useEffect(() => {
     (async () => {
       const snap = await getDocs(collection(db, "Organizations"));
       const docs: Organization[] = snap.docs
         .map((d) => ({ id: d.id, ...d.data() }))
-        .filter(
-          (o) =>
-            {return o.Organization_Name && o.Organization_Name !== "Unnamed Resource";},
-        );
+        .filter((o) => {
+          return (
+            o.Organization_Name && o.Organization_Name !== "Unnamed Resource"
+          );
+        });
       setAllResources(docs);
     })();
   }, []);
 
-  /* ---------------- derive filtered list ---------------- */
+  // derive filtered list when query changes
   useEffect(() => {
     if (!searchText && !filtersParam) {
       setFilteredResources(allResources);
@@ -72,15 +84,16 @@ export default function DatabasePage() {
     setFilteredResources(list);
   }, [allResources, searchText, filtersParam]);
 
-  /* ---------------- handle live filter from SearchBar ---------------- */
+  // handle live filter from SearchBar
   const handleFilter = ({ text }: { text?: string }) => {
     if (text === undefined) return;
     const p = new URLSearchParams(searchParams.toString());
-    if (text) p.set("search", text); else p.delete("search");
+    if (text) p.set("search", text);
+    else p.delete("search");
     router.push(`/database?${p.toString()}`);
   };
 
-  /* ---------------- render ---------------- */
+  // Render
   return (
     <div className={styles.container}>
       <main className={styles.main} style={{ padding: "2rem" }}>
@@ -90,7 +103,7 @@ export default function DatabasePage() {
           resources in the Boston area.
         </p>
 
-        {/* 🔍 Swap-in the improved SearchBar */}
+        {/* Search + filter UI */}
         <SearchBar onFilter={handleFilter} />
 
         {/* 0-results fallback */}
@@ -100,9 +113,7 @@ export default function DatabasePage() {
             <button
               onClick={() => router.push("/database")}
               className={styles.button}
-            >
-              Back to full database
-            </button>
+            ></button>
           </div>
         ) : (
           <>

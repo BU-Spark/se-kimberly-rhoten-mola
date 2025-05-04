@@ -1,3 +1,7 @@
+// app/page.tsx
+// HOME / LANDING PAGE
+// contains functionality to geocode addresses, render the search bar + map, create marker data
+
 "use client";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -17,101 +21,86 @@ interface MarkerData {
   Organization_Address?: string;
 }
 
+// Helper functions
+
+// Google Geocoding API only when we need to turn a postal address into coordinates.
+// Normalizes non‑addresses like "N/A" or "virtual"
+
 async function geocodeAddress(
   address: string,
 ): Promise<{ lat: number; lng: number }> {
-  const normalized = address.toLowerCase().trim();
-  if (normalized === "n/a" || normalized === "virtual" || normalized === "") {
-    console.log(
-      `Address "${address}" is not valid; using fallback coordinates.`,
-    );
-    return { lat: 42.3601, lng: -71.0589 };
+  const normalised = address.toLowerCase().trim();
+  if (normalised === "n/a" || normalised === "virtual" || normalised === "") {
+    return { lat: 42.3601, lng: -71.0589 }; // Center of Boston fallback
   }
+
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const encoded = encodeURIComponent(address);
   const res = await fetch(
     `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${apiKey}`,
   );
   const data = await res.json();
-  console.log("Geocoding API response for address:", address, data);
+
   if (data.status === "OK" && data.results.length > 0) {
     return data.results[0].geometry.location;
-  } else {
-    console.error(
-      "Geocoding error for address:",
-      address,
-      data.error_message || data.status,
-    );
-    return { lat: 42.3601, lng: -71.0589 };
   }
+
+  console.error("Geocoding error:", data.error_message || data.status);
+  return { lat: 42.3601, lng: -71.0589 };
 }
 
+// Function to Convert a Firestore document -> MarkerData
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function geocodeAddressIfNeeded(docData: any): Promise<MarkerData> {
-  if (docData.Organization_Address) {
-    try {
-      const result = await geocodeAddress(docData.Organization_Address);
-      return {
-        id: docData.id,
-        lat: result.lat,
-        lng: result.lng,
-        Organization_Name: docData.Organization_Name,
-        Organization_Address: docData.Organization_Address,
-      };
-    } catch (error) {
-      console.error(
-        "Error geocoding address for doc:",
-        docData.Organization_Address,
-        error,
-      );
-    }
-  }
+async function orgToMarker(docData: any): Promise<MarkerData> {
+  const { Organization_Address = "" } = docData;
+  const { lat, lng } = await geocodeAddress(Organization_Address);
+
   return {
     id: docData.id,
-    lat: 42.3601,
-    lng: -71.0589,
+    lat,
+    lng,
     Organization_Name: docData.Organization_Name,
-    Organization_Address: docData.Organization_Address,
+    Organization_Address,
   };
 }
 
 export default function Home() {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string;
   const [markers, setMarkers] = useState<MarkerData[]>([]);
-  const downtownBostonCenter = { lat: 42.355, lng: -71.0656 }; // Coordinates for downtown Boston
+  const downtownBostonCenter = { lat: 42.355, lng: -71.0656 };
+
+  // Fetch + geocode once on mount
 
   useEffect(() => {
     const fetchAllOrganizations = async () => {
       try {
-        const snapshot = await getDocs(collection(db, "Organizations"));
-        const docs = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        const geocodedPromises = docs.map((docData) =>
-          geocodeAddressIfNeeded(docData),
-        );
-        const finalMarkers = await Promise.all(geocodedPromises);
-        console.log("Final markers:", finalMarkers);
-        setMarkers(finalMarkers);
-      } catch (error) {
-        console.error("Error fetching organizations:", error);
+        const snap = await getDocs(collection(db, "Organizations"));
+        const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        const geocoded = await Promise.all(docs.map(orgToMarker));
+        setMarkers(geocoded);
+      } catch (err) {
+        console.error("Firestore fetch failed:", err);
       }
     };
-
     fetchAllOrganizations();
   }, []);
+
+  // Filter functionality
 
   const handleFilter = (filters: {
     category?: string;
     subcategory?: string;
   }) => {
-    console.log("Filters from SearchBar:", filters);
+    console.log("Filters from SearchBar:", filters); //make sure results are filtered
   };
+
+  // Display
 
   return (
     <div className={styles.container}>
       <main className={styles.main}>
+        {/* Hero */}
         <section className={styles.heroSection}>
           <h1 className={styles.heroTitle}>
             LGBTQIA2S+
@@ -120,11 +109,13 @@ export default function Home() {
           </h1>
           <p className={styles.heroSubtitle}>
             Supporting Boston&apos;s LGBTQ+ community by providing resources,
-            services, and programs that enhance well-being, provide vital
+            services, and programs that enhance well‑being, provide vital
             support, and create pathways to thrive.
           </p>
           <SearchBar onFilter={handleFilter} />
         </section>
+
+        {/* Teaser */}
         <section>
           <div className={styles.mapTeaserText}>
             <h1 className={styles.mapTeaserTitle}>MAP</h1>
@@ -139,6 +130,8 @@ export default function Home() {
             </section>
           </div>
         </section>
+
+        {/* Map preview */}
         <section className={styles.mapSection}>
           <Map
             apiKey={apiKey}

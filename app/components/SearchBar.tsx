@@ -1,5 +1,6 @@
 // components/SearchBar.tsx
 "use client";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useOrgSearch, OrgLite } from "../hooks/useOrgSearch";
@@ -14,7 +15,6 @@ export default function SearchBar() {
   const [suggestions, setSuggestions] = useState<OrgLite[]>([]);
   const [open, setOpen] = useState(false);
   const [highlighted, setHighlighted] = useState(0);
-  const showDropdown = open && text.trim().length;  // only after user types
   const boxRef = useRef<HTMLDivElement>(null);
 
   /* ---------- outside-click close ---------- */
@@ -69,7 +69,9 @@ export default function SearchBar() {
                 );
                 break;
               case "Enter":
-                suggestions[highlighted] && setText(suggestions[highlighted].name);
+                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                suggestions[highlighted] &&
+                  setText(suggestions[highlighted].name);
                 apply();
                 break;
               case "Escape":
@@ -79,7 +81,9 @@ export default function SearchBar() {
           }}
           placeholder="Start typing…"
         />
-        <button className={s.button} onClick={apply}>SEARCH</button>
+        <button className={s.button} onClick={apply}>
+          SEARCH
+        </button>
       </div>
 
       {open && (
@@ -94,7 +98,7 @@ export default function SearchBar() {
               onMouseEnter={() => setHighlighted(i)}
               onMouseDown={(e) => {
                 e.preventDefault();
-                router.push(`/resource/${org.id}`);   // deep link
+                router.push(`/resource/${org.id}`); // deep link
                 setOpen(false);
               }}
             >
