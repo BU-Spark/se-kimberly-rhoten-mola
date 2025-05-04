@@ -1,6 +1,17 @@
 // hooks/useOrgSearch.ts
+<<<<<<< HEAD
 // One‑time Firestore fetch of *just* the id + name for every org
 // Memoised Fuse.js index (leve 0: name only) for typo‑tolerant search.
+=======
+
+/**
+ * useOrgSearch
+ * 
+ * Custom React hook to provide fuzzy search for organizations.
+ * Fetches all organizations from Firestore on mount, builds a Fuse.js index,
+ * and exposes a query function for live search suggestions.
+ */
+>>>>>>> refs/remotes/origin/teamdev
 
 import { useEffect, useMemo, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
