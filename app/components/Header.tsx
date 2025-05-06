@@ -1,10 +1,8 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
-import styles from '../page.module.css';
-
+import styles from "../page.module.css";
 
 export default function Header() {
   return (
@@ -20,10 +18,13 @@ export default function Header() {
       <nav className={styles.navMenu}>
         <ul>
           <li>
-            <Link href="/">Map</Link>
+            <Link href="/map">Map</Link>
           </li>
           <li>
             <Link href="/database">Database</Link>
+          </li>
+          <li>
+            <a href="mailto:lgbtq@boston.gov">Feedback</a>
           </li>
         </ul>
       </nav>

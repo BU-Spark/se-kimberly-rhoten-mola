@@ -1,39 +1,44 @@
-Instructions for Bash Party
+# LGBTQIA2S+ Resource Map
 
-1: clone repo and make sure you are on the cs519 branch
+Interactive map and searchable database of LGBTQIA2S+‑friendly resources in the Boston area.  
+Built with **Next .js 15 + React 19, Firebase v11, Google Maps JavaScript SDK, Fuse.js**.
 
-git clone https://github.com/BU-Spark/se-kimberly-rhoten-mola
+---
 
+## Rerequisites
+
+**Node.js** | 20.x LTS 
+**npm** | 10.x (Yarn / pnpm also work)
+**Google Cloud** | Maps + Geocoding APIs enabled | Needed for map tiles & address → lat/lng lookup. |
+**Firebase** | Firestore database + web configuration | Project already provisioned by team. |
+
+---
+
+## Setup
+
+```bash
+# clone the repo
+git clone https://github.com/BU-Spark/se-kimberly-rhoten-mola.git
 cd se-kimberly-rhoten-mola
 
-git checkout -b cs519
+# (optional) switch to the correct branch
+git checkout teamdev
 
-2: from project root install dependencies
-
+# install all dependencies (production + dev)
 npm install
+npm install fuse.js
 
-npm install 20
+# copy env template -> local environment
+cp .env.example .env.local
 
-npm install @react-google-maps/api
+# then open .env.local and fill in:
+# NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your-public-browser-key
+# FIREBASE_API_KEY=...
+# FIREBASE_AUTH_DOMAIN=...
+# FIREBASE_PROJECT_ID=...
+# etc.
 
-4: run development server and open http://localhost:3000 in browser
+# run the dev server
+npm run dev      
 
-npm run dev
-
-5: click around, and try to break what we have!
-
-6: if any bugs are encountered, send to us at stefanjp@bu.edu
-
-***
-
-focus on UI / UX
-split up work via page (map page, detail page)
-make sure ananya commits to repo
-
-****try to allign design with figma as much as possible****
-
-revamp main page
-revamp detail page
-revamp detail display
-
-icons / legend are least priority
+#open http://localhost:3000

@@ -1,8 +1,10 @@
+// app/GoogleMapsProvider.tsx
+// one‑shot loader for the JS Maps SDK
+
 "use client";
 
 import React from "react";
 import { LoadScript } from "@react-google-maps/api";
-
 
 export default function GoogleMapsProvider({
   apiKey,

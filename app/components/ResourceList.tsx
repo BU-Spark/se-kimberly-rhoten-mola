@@ -1,12 +1,12 @@
-'use client';
-
-import Link from 'next/link';
+"use client";
+import s from "./ResourceList.module.css";
+import Link from "next/link";
 
 interface Resource {
   id: string;
   Organization_Name?: string;
   Organization_Description?: string;
-  // ...any other fields
+  Organization_Address?: string;
 }
 
 interface ResourceListProps {
@@ -19,21 +19,24 @@ export default function ResourceList({ resources }: ResourceListProps) {
   }
 
   return (
-    <div style={{ marginTop: '1rem' }}>
-      <p>Showing {resources.length} result(s)</p>
+    <div style={{ marginTop: "1rem" }}>
+      <p style={{ marginBottom: "1rem", fontWeight: "bold" }}>
+        Showing {resources.length} result(s)
+      </p>
+
       {resources.map((res) => (
-        <div
-          key={res.id}
-          style={{ border: '1px solid #ccc', padding: '1rem', marginBottom: '1rem' }}
-        >
-          <h3>
-            <Link href={`/resource/${res.id}`}>
-              {/* Display resource name or fallback */}
-              {res.Organization_Name || 'Unnamed Resource'}
-            </Link>
+        <div key={res.id} className={s.card}>
+          <h3 className={s.name}>
+            <Link href={`/resource/${res.id}`}>{res.Organization_Name}</Link>
           </h3>
-          {/* Show a short snippet of the description */}
-          <p>{res.Organization_Description || 'No description available.'}</p>
+
+          {res.Organization_Address && (
+            <p className={s.address}>{res.Organization_Address}</p>
+          )}
+
+          {res.Organization_Description && (
+            <p className={s.body}>{res.Organization_Description}</p>
+          )}
         </div>
       ))}
     </div>

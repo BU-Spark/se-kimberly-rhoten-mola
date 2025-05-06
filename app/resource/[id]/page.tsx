@@ -1,18 +1,25 @@
+// app/resource/[id]/page.tsx
+
+//Given a Firestore document ID in the dynamic route `[id]`, fetches the full
+//organisation record, and displays all of the neccessary data.
+
 "use client";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase/configfirebase";
 import dynamic from "next/dynamic";
 import styles from "../../page.module.css";
 
-// Dynamically import Map to ensure client-side rendering.
+// Lazily load the Map component on the client only
 const Map = dynamic(() => import("../../components/Map"), { ssr: false });
 
 export default function ResourceDetailPage() {
+  const router = useRouter(); // Routing help (back button)
   const { id } = useParams(); // Firestore document ID from the URL
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [resource, setResource] = useState<any | null>(null);
   const [coordinates, setCoordinates] = useState<{
@@ -44,7 +51,7 @@ export default function ResourceDetailPage() {
     }
   }, [id]);
 
-  // Geocode the address if resource does not have lat/lng.
+  // Geocode the address
   useEffect(() => {
     if (
       resource &&
@@ -72,7 +79,7 @@ export default function ResourceDetailPage() {
     const encoded = encodeURIComponent(address);
     console.log("Calling Geocoding API for address:", address);
     const res = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${apiKey}`
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${apiKey}`,
     );
     const data = await res.json();
     console.log("Geocoding API response:", data);
@@ -85,7 +92,7 @@ export default function ResourceDetailPage() {
   }
 
   if (!resource) {
-    return <p>Loading resource...</p>;
+    return <p>Loading resource...</p>; //if loading, show this
   }
 
   // Destructure fields from the resource.
@@ -111,11 +118,7 @@ export default function ResourceDetailPage() {
   // Use resource's lat/lng if available; otherwise use geocoded coordinates; otherwise fall back to default Boston coordinates.
   const effectiveLat = lat ?? coordinates?.lat ?? 42.3601;
   const effectiveLng = lng ?? coordinates?.lng ?? -71.0589;
-  console.log(
-    "Effective coordinates for detail page:",
-    effectiveLat,
-    effectiveLng,
-  );
+  console.log("Coordinates for detail page:", effectiveLat, effectiveLng);
 
   // Utility for formatting URLs.
   const formatUrl = (url: string) => {
@@ -124,101 +127,83 @@ export default function ResourceDetailPage() {
       : `https://${url}`;
   };
 
+  // Render
   return (
     <div className={styles.container}>
       {/* MAIN CONTENT */}
       <main className={styles.main} style={{ padding: "2rem" }}>
-        <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>
+        {/* back button navigation */}
+        <button
+          onClick={() => router.back()}
+          style={{
+            background: "none",
+            border: "none",
+            color: "#1871BD",
+            cursor: "pointer",
+            fontSize: "2rem",
+            padding: 0,
+            alignSelf: "flex-start",
+            width: "auto",
+          }}
+        >
+          ←
+        </button>
+
+        {/* Heading + website */}
+        <h1 style={{ fontSize: "4rem", marginBottom: "1rem" }}>
           {Organization_Name || "Resource Name"}
         </h1>
+        <h2>
+          {Organization_Website ? (
+            <a
+              href={formatUrl(Organization_Website)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {Organization_Website}
+            </a>
+          ) : (
+            "N/A"
+          )}
+        </h2>
+        <br></br>
         <div style={{ display: "flex", gap: "2rem" }}>
-          {/* Left column: resource info */}
+          {/* LEFT COLUMN */}
           <div style={{ flex: 1 }}>
+            {/* Description */}
             <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
               Description
             </h2>
             <p style={{ marginBottom: "1rem" }}>
               {Organization_Description || "No description available."}
             </p>
+            {/* Additional Info */}
             <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
               Additional Info
             </h2>
-            <ul style={{ listStyleType: "disc", marginLeft: "1.5rem" }}>
-              <li>
-                <strong>Website:</strong>{" "}
-                {Organization_Website ? (
-                  <a
-                    href={formatUrl(Organization_Website)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {Organization_Website}
-                  </a>
-                ) : (
-                  "N/A"
-                )}
-              </li>
-              <li>
-                <strong>Address:</strong>{" "}
-                {Organization_Address ? (
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                      Organization_Address,
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {Organization_Address}
-                  </a>
-                ) : (
-                  "N/A"
-                )}
-              </li>
-              <li>
-                <strong>Public Phone:</strong> {Public_Phone_Number || "N/A"}
-              </li>
-              <li>
-                <strong>Public Email:</strong>{" "}
-                {Public_Email ? (
-                  <a href={`mailto:${Public_Email}`}>{Public_Email}</a>
-                ) : (
-                  "N/A"
-                )}
-              </li>
-              <li>
-                <strong>Preferred Contact:</strong>{" "}
-                {Preferred_Method_Of_Organizational_Contact || "N/A"}
-              </li>
-              <li>
-                <strong>Type of Service:</strong> {Type_Of_Service || "N/A"}
-              </li>
-              <li>
-                <strong>Target Population:</strong> {Target_Population || "N/A"}
-              </li>
-              <li>
-                <strong>Neighborhood(s) Served:</strong>{" "}
-                {Neighborhood_Of_Organization_Neighborhoods_Primarily_Served ||
-                  "N/A"}
-              </li>
-              <li>
-                <strong>Days/Hours of Operation:</strong>{" "}
-                {Days_Hours_Of_Operation || "N/A"}
-              </li>
-              <li>
-                <strong>Program Cost:</strong>{" "}
-                {Program_Cost_To_Participant || "N/A"}
-              </li>
-              <li>
-                <strong>Health Insurance Required?:</strong>{" "}
-                {Health_Insurance_Required || "N/A"}
-              </li>
-            </ul>
+            <strong>Type of Service:</strong> {Type_Of_Service || "N/A"}
+            <br></br>
+            <strong>Target Population:</strong> {Target_Population || "N/A"}
+            <br></br>
+            <strong>Neighborhood(s) Served:</strong>{" "}
+            {Neighborhood_Of_Organization_Neighborhoods_Primarily_Served ||
+              "N/A"}
+            <br></br>
+            <strong>Program Cost:</strong>{" "}
+            {Program_Cost_To_Participant || "N/A"}
+            <br></br>
+            <strong>Health Insurance Required?:</strong>{" "}
+            {Health_Insurance_Required || "N/A"}
           </div>
-          {/* Right column: map showing only this resource's marker */}
-          <div style={{ width: "600px", height: "400px", flexShrink: 0 }}>
-            <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
-              Location
-            </h2>
+          {/* RIGHT COLUMN */}
+          <div
+            style={{
+              width: "400px",
+              height: "90vh",
+              gap: "2rem",
+              float: "left",
+            }}
+          >
             {/* 
               Using a key that depends on the resource id and effective coordinates 
               forces the Map to re-mount when these values change—ensuring the marker
@@ -235,7 +220,42 @@ export default function ResourceDetailPage() {
                   Organization_Address, // Include address so the info window builds like on the main page.
                 },
               ]}
+              height="400px"
             />
+            <br></br>
+            {/* Contact Information */}
+            <h2>Contact Information</h2>
+            <strong>Preferred Contact:</strong>{" "}
+            {Preferred_Method_Of_Organizational_Contact || "N/A"}
+            <br></br>
+            <strong>Address:</strong>{" "}
+            {Organization_Address ? (
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                  Organization_Address,
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {Organization_Address}
+              </a>
+            ) : (
+              "N/A"
+            )}
+            <br></br>
+            <strong>Phone Number:</strong> {Public_Phone_Number || "N/A"}
+            <br></br>
+            <strong>Email:</strong>{" "}
+            {Public_Email ? (
+              <a href={`mailto:${Public_Email}`}>{Public_Email}</a>
+            ) : (
+              "N/A"
+            )}
+            <br></br>
+            <h2>Days/Hours of Operation:</h2>
+            <strong></strong>
+            {""}
+            {Days_Hours_Of_Operation || "Contact for Info"}
           </div>
         </div>
       </main>

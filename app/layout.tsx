@@ -1,4 +1,7 @@
 // app/layout.tsx
+// wrapper for every page in the application (header / footer always rendered)
+// provides Google Maps API via <GoogleMapsProvider>
+
 import type { Metadata } from "next";
 import "./globals.css";
 import GoogleMapsProvider from "./GoogleMapsProvider";

@@ -1,0 +1,64 @@
+/* ---------- sizing for the bar itself ---------- */
+.controls {
+    display: flex;
+    gap: .75rem;
+  }
+  
+.input {
+width: min(90vw, 480px);
+font-size: 1.1rem;
+padding: 1rem 1.25rem;
+border: 2px solid #ccc;
+border-radius: .5rem;
+}
+  
+.button {
+font-size: 1.1rem;
+font-weight: 600;
+padding: 1rem 1.5rem;
+background: #267dc9;
+color: #fff;
+border: none;
+border-radius: .5rem;
+cursor: pointer;
+}
+.button:hover { background: #206caf; }
+  
+/* ---------- dropdown (absolute, bullet-free) ---------- */
+.wrapper { position: relative; }
+
+.listbox {
+list-style: none;       /* no bullets */
+margin: 0;
+padding: .25rem 0;
+position: absolute;
+top: calc(100% + .4rem); /* float under the bar */
+left: 0;
+width: 100%;
+max-height: 320px;
+overflow-y: auto;
+background: #ffffffee;   /* translucent white for bg photo contrast */
+border: 1px solid #d4d4d4;
+border-radius: .75rem;
+box-shadow: 0 6px 30px rgba(0,0,0,.18);
+z-index: 1000;
+}
+
+.option,
+.seeAll {
+padding: .7rem 1rem;
+cursor: pointer;
+font-size: .98rem;
+}
+
+.option:hover,
+.optionActive,
+.seeAll:hover { background: #f3f6ff; }
+
+.groupLabel {
+    display: none;
+}
+  
+.dropdownActive .groupLabel {
+display: block;
+}

@@ -1,9 +1,23 @@
 "use client";
 
+/**
+ * Map.tsx
+ *
+ * Renders a Google Map with advanced markers for each resource.
+ * Markers are created using the Google Maps "AdvancedMarkerElement" API.
+ * When a marker is clicked, an info window appears with resource details and a link.
+ *
+ * Props:
+ *   - markers: Array of marker data (id, lat, lng, name, address)
+ *   - center: Optional map center
+ *   - height: Map container height
+ */
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useEffect, useRef, useState } from "react";
 import { GoogleMap } from "@react-google-maps/api";
 
+// Default center: Boston, MA
 const defaultCenter = { lat: 42.3601, lng: -71.0589 };
 
 export interface MarkerData {
@@ -16,59 +30,68 @@ export interface MarkerData {
 
 interface MapProps {
   markers?: MarkerData[];
-  center?: { lat: number; lng: number }; // New prop for a custom center
+  center?: { lat: number; lng: number };
+  height?: string | number;
 }
 
-export default function Map({ markers = [], center }: MapProps) {
+export default function Map({
+  markers = [],
+  center,
+  height = "100%",
+}: MapProps) {
+  // --- Refs for map and marker management ---
   const mapRef = useRef<google.maps.Map | null>(null);
+  // Store references to advanced markers for cleanup
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const advancedMarkersRef = useRef<any[]>([]);
+  // Single info window instance for all markers
   const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
 
+  // --- Called when the map is loaded ---
   const onMapLoad = (map: google.maps.Map) => {
     mapRef.current = map;
     setMapLoaded(true);
     console.log("Map loaded, mapRef set:", map);
   };
 
+  // --- Effect: Add/Remove markers when data or map loads ---
   useEffect(() => {
-    console.log(
-      "Map effect triggered. Markers:",
-      markers,
-      "MapLoaded:",
-      mapLoaded,
-    );
+    // Only run if map is loaded and Google Maps API is available
     if (mapRef.current && mapLoaded && "importLibrary" in google.maps) {
-      console.log("Clearing previous markers:", advancedMarkersRef.current);
+      // Remove previous markers from the map
       advancedMarkersRef.current.forEach((marker) => marker.setMap(null));
       advancedMarkersRef.current = [];
 
+      // Create a single info window instance if not already created
       if (infoWindowRef.current === null) {
         infoWindowRef.current = new google.maps.InfoWindow();
-        console.log("Created new info window instance.");
       }
 
-      console.log("Importing marker library...");
+      // Dynamically import the marker library and add markers
       google.maps
         .importLibrary("marker")
-        .then(({ AdvancedMarkerElement }) => {
-          console.log("Marker library imported:", AdvancedMarkerElement);
+        .then((lib) => {
+          // Type assertion to satisfy TypeScript
+          const { AdvancedMarkerElement } = lib as {
+            AdvancedMarkerElement: typeof google.maps.marker.AdvancedMarkerElement;
+          };
           markers.forEach((markerData) => {
             const position = {
               lat: markerData.lat || defaultCenter.lat,
               lng: markerData.lng || defaultCenter.lng,
             };
-            console.log("Creating advanced marker for:", markerData);
+            // Create an advanced marker for each resource
             const advancedMarker = new AdvancedMarkerElement({
               map: mapRef.current!,
               position,
               title: markerData.Organization_Name,
               gmpClickable: true,
             });
+            // Add click listener to show info window
             advancedMarker.addListener("gmp-click", () => {
-              console.log("Marker clicked:", markerData);
               infoWindowRef.current!.close();
+              // Build info window content
               const contentDiv = document.createElement("div");
               contentDiv.style.fontSize = "14px";
               contentDiv.style.lineHeight = "1.5";
@@ -79,7 +102,8 @@ export default function Map({ markers = [], center }: MapProps) {
               nameEl.style.marginBottom = "4px";
               contentDiv.appendChild(nameEl);
               const addrEl = document.createElement("div");
-              addrEl.textContent = markerData.Organization_Address || "Address not available";
+              addrEl.textContent =
+                markerData.Organization_Address || "Address not available";
               addrEl.style.marginBottom = "4px";
               contentDiv.appendChild(addrEl);
               const detailLink = document.createElement("a");
@@ -90,28 +114,22 @@ export default function Map({ markers = [], center }: MapProps) {
               detailLink.style.color = "#0070f3";
               detailLink.style.textDecoration = "underline";
               contentDiv.appendChild(detailLink);
-              console.log("Setting info window content:", contentDiv);
               infoWindowRef.current!.setContent(contentDiv);
               infoWindowRef.current!.open(mapRef.current, advancedMarker);
-              console.log("Opened info window.");
             });
             advancedMarkersRef.current.push(advancedMarker);
-            console.log("Stored advanced marker:", advancedMarker);
           });
         })
         .catch((error) => {
           console.error("Error importing marker library:", error);
         });
-    } else {
-      console.log(
-        "Map is not loaded yet or google.maps.importLibrary not available.",
-      );
     }
   }, [markers, mapLoaded]);
 
+  // --- Render the Google Map ---
   return (
     <GoogleMap
-      mapContainerStyle={{ width: "100%", height: "400px" }}
+      mapContainerStyle={{ width: "100%", height }}
       center={
         // If a center prop is provided, use it. Otherwise, use marker or default center.
         center ||
