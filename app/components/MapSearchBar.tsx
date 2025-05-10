@@ -1,5 +1,6 @@
 "use client";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useState, useRef, useEffect } from "react";
 import s from "./SearchBar.module.css";
 
@@ -10,7 +11,7 @@ export default function MapSearchBar({
 }) {
   const [text, setText] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [selectedServices] = useState<string[]>([]);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
