@@ -11,7 +11,7 @@ export default function MapSearchBar({
 }) {
   const [text, setText] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedServices] = useState<string[]>([]);
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
 
   const containerRef = useRef<HTMLDivElement>(null);
 

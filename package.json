@@ -1,7 +1,10 @@
 {
   "name": "template-next-js",
   "version": "0.1.0",
+<<<<<<< HEAD
   "type": "module",
+=======
+>>>>>>> origin/main
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -10,10 +13,13 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
+<<<<<<< HEAD
     "20": "^3.1.9",
     "@react-google-maps/api": "^2.20.6",
     "firebase": "^11.5.0",
     "fuse.js": "^7.1.0",
+=======
+>>>>>>> origin/main
     "next": "15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
