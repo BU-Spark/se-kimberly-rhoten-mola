@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import Map from "./components/Map";
-import SearchBar from "./components/SearchBar";
+import Search from "@/app/components/sections/Search";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/configfirebase";
 
@@ -75,7 +75,6 @@ async function geocodeAddressIfNeeded(docData: any): Promise<MarkerData> {
 }
 
 export default function Home() {
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string;
   const [markers, setMarkers] = useState<MarkerData[]>([]);
   const downtownBostonCenter = { lat: 42.355, lng: -71.0656 }; // Coordinates for downtown Boston
 
@@ -111,22 +110,9 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <main className={styles.main}>
-        <section className={styles.heroSection}>
-          <h1 className={styles.heroTitle}>
-            LGBTQIA2S+
-            <br />
-            Resource Map
-          </h1>
-          <p className={styles.heroSubtitle}>
-            Supporting Boston&apos;s LGBTQ+ community by providing resources,
-            services, and programs that enhance well-being, provide vital
-            support, and create pathways to thrive.
-          </p>
-          <SearchBar onFilter={handleFilter} />
-        </section>
+        <Search onFilter={handleFilter} />
         <section className={styles.mapSection}>
           <Map
-            apiKey={apiKey}
             markers={markers}
             center={downtownBostonCenter}
           />
