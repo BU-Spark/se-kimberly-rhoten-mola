@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { db } from "../../firebase/configfirebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
@@ -11,7 +11,6 @@ interface Organization {
   Organization_Name: string;
 }
 
-// These are your 9 categories, but you can add or remove as needed.
 const SERVICE_OPTIONS = [
   "Food",
   "Health and Wellness",
@@ -27,38 +26,26 @@ const SERVICE_OPTIONS = [
 
 export default function SearchBar() {
   const router = useRouter();
-
-  // Single text input state
+  const searchBarRef = useRef<HTMLDivElement>(null);
   const [searchText, setSearchText] = useState("");
-
-  // Storing search suggestions
   const [suggestions, setSuggestions] = useState<Organization[]>([]);
-
-  // Show/hide of the dropdown
   const [showDropdown, setShowDropdown] = useState(false);
-
-  // Track which service(s) are selected
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
 
-  // Function that toggles a checkbox
   const handleServiceChange = (service: string, checked: boolean) => {
     if (checked) {
-      // add this service to array
       setSelectedServices((prev) => [...prev, service]);
     } else {
-      // remove it
       setSelectedServices((prev) => prev.filter((s) => s !== service));
     }
   };
 
-  // Fetch suggestions for the text input
   const fetchSuggestions = async (text: string) => {
     if (!text.trim()) {
       setSuggestions([]);
       return;
     }
     try {
-      console.log("Fetching suggestions for:", text);
       const orgsRef = collection(db, "Organizations");
       const q = query(
         orgsRef,
@@ -76,7 +63,6 @@ export default function SearchBar() {
           });
         }
       });
-      console.log("Got", results.length, "matches");
       setSuggestions(results);
     } catch (error) {
       console.error("Error fetching suggestions:", error);
@@ -90,44 +76,78 @@ export default function SearchBar() {
     fetchSuggestions(text);
   };
 
-  // Pressing enter in the text input
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleSearchClick();
     }
   };
 
-  // If user clicks on a suggested organization
   const handleSuggestionClick = (org: Organization) => {
     setSearchText(org.Organization_Name);
     setShowDropdown(false);
-    // navigate to database, passing "search=org name" (no filter).
     router.push(
       `/database?search=${encodeURIComponent(org.Organization_Name)}`,
     );
   };
 
-  // We can remove the old handleServiceOptionClick because we now have checkboxes
-
-  // Called when user explicitly clicks the search button
   const handleSearchClick = () => {
-    // Build a query param string from both searchText and selectedServices
     const params = new URLSearchParams();
     if (searchText.trim()) {
       params.append("search", searchText.trim());
     }
     if (selectedServices.length > 0) {
-      params.append("filters", selectedServices.join(",")); 
-      // e.g. "Food,Hotlines"
+      params.append("filters", selectedServices.join(","));
     }
-    // e.g. /database?search=Impact&filters=Food,Hotlines
     router.push(`/database?${params.toString()}`);
     setShowDropdown(false);
   };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchBarRef.current && !searchBarRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div style={{ position: "relative" }}>
-      <div style={{ display: "flex", gap: "1rem" }}>
+    <div 
+      ref={searchBarRef}
+      className="search-container" 
+      style={{ 
+        position: "relative",
+        width: "100%",
+        maxWidth: "1200px",
+        margin: "0 auto",
+        padding: "20px"
+      }}
+    >
+      <div className="search-wrapper" style={{ 
+        display: "flex", 
+        alignItems: "center",
+        width: "100%",
+        backgroundColor: "white",
+        border: "1px solid #e0e0e0",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+        height: "66px",
+        borderRadius: "0" // Ensure square corners
+      }}>
+        <div className="search-icon" style={{
+          padding: "0 20px",
+          display: "flex",
+          alignItems: "center"
+        }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 0 0-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 0 0 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#666"/>
+          </svg>
+        </div>
+        
         <input
           type="text"
           placeholder="Start typing or select a service"
@@ -135,10 +155,56 @@ export default function SearchBar() {
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           onFocus={() => setShowDropdown(true)}
-          className={styles.searchInput}
+          style={{
+            flex: 1,
+            height: "100%",
+            padding: "0",
+            fontSize: "16px",
+            border: "none",
+            outline: "none",
+            backgroundColor: "transparent",
+            fontFamily: "'Inter', sans-serif",
+            color: "#333"
+          }}
         />
-        <button onClick={handleSearchClick} style={{ padding: "0.5rem 1rem" }}>
-          SEARCH
+        
+        <button 
+          onClick={handleSearchClick} 
+          style={{ 
+            height: "100%",
+            padding: "0 25px",
+            backgroundColor: "#1E88E5",
+            color: "white",
+            border: "none",
+            borderRadius: "0", // Ensure square corners
+            fontWeight: "600",
+            fontSize: "16px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            minWidth: "220px",
+            letterSpacing: "0.5px",
+            transition: "background-color 0.2s ease"
+          }}
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#1976D2"}
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#1E88E5"}
+        >
+          GO TO DATABASE
+          <div style={{ 
+            marginLeft: "10px", 
+            display: "flex", 
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(255,255,255,0.2)",
+            width: "28px",
+            height: "28px",
+            borderRadius: "50%" // Keep the circle for the arrow icon
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z" fill="white"/>
+            </svg>
+          </div>
         </button>
       </div>
 
@@ -146,65 +212,99 @@ export default function SearchBar() {
         <div
           style={{
             position: "absolute",
-            top: "110%",
-            left: 0,
-            right: 0,
+            top: "86px", // Position below the search bar with some spacing
+            left: "20px",
+            right: "20px",
             background: "#fff",
-            border: "1px solid #ccc",
+            border: "1px solid #eaeaea",
+            borderRadius: "0", // Ensure square corners
             zIndex: 999,
-            maxHeight: "300px",
+            maxHeight: "350px",
             overflowY: "auto",
-            padding: "0.5rem",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.08)"
           }}
         >
           {/* Suggestions */}
-          {suggestions.length > 0 &&
-            suggestions.map((org) => (
-              <div
-                key={org.id}
-                onClick={() => handleSuggestionClick(org)}
-                style={{ padding: "0.5rem", cursor: "pointer" }}
-              >
-                {org.Organization_Name}
-              </div>
-            ))}
+          {suggestions.length > 0 && (
+            <div style={{ padding: "10px 0" }}>
+              {suggestions.map((org) => (
+                <div
+                  key={org.id}
+                  onClick={() => handleSuggestionClick(org)}
+                  style={{ 
+                    padding: "12px 20px", 
+                    cursor: "pointer",
+                    transition: "background-color 0.2s ease"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#f5f5f5"}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                >
+                  {org.Organization_Name}
+                </div>
+              ))}
+            </div>
+          )}
 
-          {/* Optional heading */}
+          {/* Filter heading */}
           <div
             style={{
-              fontWeight: "bold",
-              backgroundColor: "#eee",
-              marginTop: suggestions.length > 0 ? "0.5rem" : 0,
-              padding: "0.5rem",
+              fontWeight: "600",
+              backgroundColor: "#f7f7f7",
+              padding: "15px 20px",
+              borderTop: suggestions.length > 0 ? "1px solid #eaeaea" : "none",
+              borderBottom: "1px solid #eaeaea"
             }}
           >
             Filter by Service:
           </div>
-          {/* Checkboxes for multiple select */}
-          {SERVICE_OPTIONS.map((option) => {
-            const isChecked = selectedServices.includes(option);
-            return (
-              <label
-                key={option}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  padding: "0.5rem",
-                  cursor: "pointer",
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={isChecked}
-                  onChange={(e) =>
-                    handleServiceChange(option, e.target.checked)
-                  }
-                />
-                {option}
-              </label>
-            );
-          })}
+          
+          {/* Service options grid */}
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", 
+            padding: "10px" 
+          }}>
+            {SERVICE_OPTIONS.map((option) => {
+              const isChecked = selectedServices.includes(option);
+              return (
+                <label
+                  key={option}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    padding: "12px 10px",
+                    cursor: "pointer",
+                    backgroundColor: isChecked ? "#e3f2fd" : "transparent",
+                    transition: "background-color 0.2s ease",
+                    margin: "2px"
+                  }}
+                  onMouseOver={(e) => !isChecked && (e.currentTarget.style.backgroundColor = "#f5f5f5")}
+                  onMouseOut={(e) => !isChecked && (e.currentTarget.style.backgroundColor = "transparent")}
+                >
+                  <div style={{
+                    position: "relative",
+                    width: "18px",
+                    height: "18px"
+                  }}>
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={(e) => handleServiceChange(option, e.target.checked)}
+                      style={{
+                        width: "18px",
+                        height: "18px",
+                        margin: 0,
+                        accentColor: "#1E88E5",
+                        cursor: "pointer"
+                      }}
+                    />
+                  </div>
+                  {option}
+                </label>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>
