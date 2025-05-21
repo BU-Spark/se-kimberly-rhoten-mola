@@ -1,19 +1,17 @@
 "use client";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase/configfirebase";
 import dynamic from "next/dynamic";
-import styles from "../../page.module.css";
+import Link from "next/link";
 
 // Dynamically import Map to ensure client-side rendering.
 const Map = dynamic(() => import("../../components/Map"), { ssr: false });
 
 export default function ResourceDetailPage() {
   const { id } = useParams(); // Firestore document ID from the URL
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [resource, setResource] = useState<any | null>(null);
   const [coordinates, setCoordinates] = useState<{
     lat: number;
@@ -25,7 +23,7 @@ export default function ResourceDetailPage() {
     const fetchResource = async () => {
       try {
         console.log("Fetching resource for id:", id);
-        const docRef = doc(db, "Organizations", id);
+        const docRef = doc(db, "Organizations", String(id));
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
@@ -107,15 +105,9 @@ export default function ResourceDetailPage() {
     lng,
   } = resource;
 
-  // Compute effective coordinates:
-  // Use resource's lat/lng if available; otherwise use geocoded coordinates; otherwise fall back to default Boston coordinates.
+  // Compute effective coordinates
   const effectiveLat = lat ?? coordinates?.lat ?? 42.3601;
   const effectiveLng = lng ?? coordinates?.lng ?? -71.0589;
-  console.log(
-    "Effective coordinates for detail page:",
-    effectiveLat,
-    effectiveLng,
-  );
 
   // Utility for formatting URLs.
   const formatUrl = (url: string) => {
@@ -124,106 +116,182 @@ export default function ResourceDetailPage() {
       : `https://${url}`;
   };
 
+  const styles = {
+    container: {
+      maxWidth: "1200px",
+      margin: "0 auto",
+      padding: "2rem",
+      fontFamily: "Arial, sans-serif",
+      color: "#333",
+    },
+    backButton: {
+      display: "inline-flex",
+      alignItems: "center",
+      fontSize: "1rem",
+      color: "#0078d7",
+      marginBottom: "1.5rem",
+      cursor: "pointer",
+      background: "none",
+      border: "none",
+      padding: 0,
+      textDecoration: "none",
+    },
+    backArrow: {
+      marginRight: "0.5rem",
+    },
+    header: {
+      fontSize: "2.5rem",
+      fontWeight: "bold",
+      marginBottom: "1.5rem",
+      color: "#333",
+      borderBottom: "none",
+    },
+    twoColumnLayout: {
+      display: "flex",
+      gap: "2rem",
+      flexWrap: "wrap" as "wrap",
+    },
+    leftColumn: {
+      flex: "1 1 600px",
+    },
+    rightColumn: {
+      flex: "1 1 400px",
+    },
+    sectionTitle: {
+      fontSize: "1.5rem",
+      fontWeight: "bold",
+      marginBottom: "1rem",
+      marginTop: "1.5rem",
+      color: "#333",
+    },
+    description: {
+      fontSize: "1rem",
+      lineHeight: "1.6",
+      marginBottom: "2rem",
+    },
+    infoList: {
+      listStyleType: "none",
+      padding: 0,
+      margin: 0,
+    },
+    infoItem: {
+      marginBottom: "1rem",
+      lineHeight: "1.5",
+    },
+    label: {
+      fontWeight: "bold",
+      display: "inline-block",
+      marginRight: "0.5rem",
+    },
+    link: {
+      color: "#0078d7",
+      textDecoration: "none",
+    },
+    mapContainer: {
+      width: "100%",
+      height: "400px",
+      border: "1px solid #e0e0e0",
+      borderRadius: "4px",
+      overflow: "hidden",
+    },
+  };
+
   return (
-    <div className={styles.container}>
-      {/* MAIN CONTENT */}
-      <main className={styles.main} style={{ padding: "2rem" }}>
-        <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>
-          {Organization_Name || "Resource Name"}
-        </h1>
-        <div style={{ display: "flex", gap: "2rem" }}>
-          {/* Left column: resource info */}
-          <div style={{ flex: 1 }}>
-            <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
-              Description
-            </h2>
-            <p style={{ marginBottom: "1rem" }}>
-              {Organization_Description || "No description available."}
-            </p>
-            <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
-              Additional Info
-            </h2>
-            <ul style={{ listStyleType: "disc", marginLeft: "1.5rem" }}>
-              <li>
-                <strong>Website:</strong>{" "}
-                {Organization_Website ? (
-                  <a
-                    href={formatUrl(Organization_Website)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {Organization_Website}
-                  </a>
-                ) : (
-                  "N/A"
-                )}
-              </li>
-              <li>
-                <strong>Address:</strong>{" "}
-                {Organization_Address ? (
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                      Organization_Address,
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {Organization_Address}
-                  </a>
-                ) : (
-                  "N/A"
-                )}
-              </li>
-              <li>
-                <strong>Public Phone:</strong> {Public_Phone_Number || "N/A"}
-              </li>
-              <li>
-                <strong>Public Email:</strong>{" "}
-                {Public_Email ? (
-                  <a href={`mailto:${Public_Email}`}>{Public_Email}</a>
-                ) : (
-                  "N/A"
-                )}
-              </li>
-              <li>
-                <strong>Preferred Contact:</strong>{" "}
-                {Preferred_Method_Of_Organizational_Contact || "N/A"}
-              </li>
-              <li>
-                <strong>Type of Service:</strong> {Type_Of_Service || "N/A"}
-              </li>
-              <li>
-                <strong>Target Population:</strong> {Target_Population || "N/A"}
-              </li>
-              <li>
-                <strong>Neighborhood(s) Served:</strong>{" "}
-                {Neighborhood_Of_Organization_Neighborhoods_Primarily_Served ||
-                  "N/A"}
-              </li>
-              <li>
-                <strong>Days/Hours of Operation:</strong>{" "}
-                {Days_Hours_Of_Operation || "N/A"}
-              </li>
-              <li>
-                <strong>Program Cost:</strong>{" "}
-                {Program_Cost_To_Participant || "N/A"}
-              </li>
-              <li>
-                <strong>Health Insurance Required?:</strong>{" "}
-                {Health_Insurance_Required || "N/A"}
-              </li>
-            </ul>
-          </div>
-          {/* Right column: map showing only this resource's marker */}
-          <div style={{ width: "600px", height: "400px", flexShrink: 0 }}>
-            <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
-              Location
-            </h2>
-            {/* 
-              Using a key that depends on the resource id and effective coordinates 
-              forces the Map to re-mount when these values change—ensuring the marker
-              initialization logic re-runs (exactly as on the main page).
-            */}
+    <div style={styles.container}>
+      <Link href="/database" style={styles.backButton}>
+        <span style={styles.backArrow}>←</span> Back to results
+      </Link>
+      
+      <h1 style={styles.header}>{Organization_Name || "Resource Name"}</h1>
+      
+      <div style={styles.twoColumnLayout}>
+        {/* Left column: resource info */}
+        <div style={styles.leftColumn}>
+          <h2 style={styles.sectionTitle}>Description</h2>
+          <p style={styles.description}>
+            {Organization_Description || "No description available."}
+          </p>
+          
+          <h2 style={styles.sectionTitle}>Additional Info</h2>
+          <ul style={styles.infoList}>
+            <li style={styles.infoItem}>
+              <span style={styles.label}>Website:</span>
+              {Organization_Website ? (
+                <a
+                  href={formatUrl(Organization_Website)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={styles.link}
+                >
+                  {Organization_Website}
+                </a>
+              ) : (
+                "N/A"
+              )}
+            </li>
+            <li style={styles.infoItem}>
+              <span style={styles.label}>Address:</span>
+              {Organization_Address ? (
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                    Organization_Address,
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={styles.link}
+                >
+                  {Organization_Address}
+                </a>
+              ) : (
+                "N/A"
+              )}
+            </li>
+            <li style={styles.infoItem}>
+              <span style={styles.label}>Public Phone:</span> {Public_Phone_Number || "N/A"}
+            </li>
+            <li style={styles.infoItem}>
+              <span style={styles.label}>Public Email:</span>
+              {Public_Email ? (
+                <a href={`mailto:${Public_Email}`} style={styles.link}>
+                  {Public_Email}
+                </a>
+              ) : (
+                "N/A"
+              )}
+            </li>
+            <li style={styles.infoItem}>
+              <span style={styles.label}>Preferred Contact:</span>
+              {Preferred_Method_Of_Organizational_Contact || "N/A"}
+            </li>
+            <li style={styles.infoItem}>
+              <span style={styles.label}>Type of Service:</span> {Type_Of_Service || "N/A"}
+            </li>
+            <li style={styles.infoItem}>
+              <span style={styles.label}>Target Population:</span> {Target_Population || "N/A"}
+            </li>
+            <li style={styles.infoItem}>
+              <span style={styles.label}>Neighborhood(s) Served:</span>
+              {Neighborhood_Of_Organization_Neighborhoods_Primarily_Served || "N/A"}
+            </li>
+            <li style={styles.infoItem}>
+              <span style={styles.label}>Days/Hours of Operation:</span>
+              {Days_Hours_Of_Operation || "N/A"}
+            </li>
+            <li style={styles.infoItem}>
+              <span style={styles.label}>Program Cost:</span>
+              {Program_Cost_To_Participant || "N/A"}
+            </li>
+            <li style={styles.infoItem}>
+              <span style={styles.label}>Health Insurance Required?:</span>
+              {Health_Insurance_Required || "N/A"}
+            </li>
+          </ul>
+        </div>
+        
+        {/* Right column: map */}
+        <div style={styles.rightColumn}>
+          <h2 style={styles.sectionTitle}>Location</h2>
+          <div style={styles.mapContainer}>
             <Map
               key={`${id}-${effectiveLat}-${effectiveLng}`}
               markers={[
@@ -232,13 +300,13 @@ export default function ResourceDetailPage() {
                   lat: effectiveLat,
                   lng: effectiveLng,
                   Organization_Name,
-                  Organization_Address, // Include address so the info window builds like on the main page.
+                  Organization_Address,
                 },
               ]}
             />
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
