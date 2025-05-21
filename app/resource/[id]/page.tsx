@@ -296,7 +296,7 @@ export default function ResourceDetailPage() {
               key={`${id}-${effectiveLat}-${effectiveLng}`}
               markers={[
                 {
-                  id,
+                  id: String(id),
                   lat: effectiveLat,
                   lng: effectiveLng,
                   Organization_Name,
