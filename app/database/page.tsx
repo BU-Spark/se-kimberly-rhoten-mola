@@ -1,32 +1,31 @@
 "use client";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
+
 import { db } from "../../firebase/configfirebase";
 import { collection, getDocs } from "firebase/firestore";
+
 import ResourceList from "../components/ResourceList";
 import SearchBar from "../components/SearchBar";
-import styles from "../page.module.css";
 
 interface Organization {
   id: string;
   Organization_Name: string;
-  Type_Of_Service?: string; // or whatever fields you have
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any; // fallback for other fields
+  Type_Of_Service?: string;
+  [key: string]: any;
 }
 
 export default function DatabasePage() {
   const [allResources, setAllResources] = useState<Organization[]>([]);
-  const [filteredResources, setFilteredResources] = useState<Organization[]>(
-    [],
-  );
+  const [filteredResources, setFilteredResources] = useState<Organization[]>([]);
+  const router = useRouter();
 
   // Grab query params: e.g. /database?search=Impact&filters=Food,Hotlines
   const searchParams = useSearchParams();
   const searchText = searchParams.get("search") || "";
-  const filtersParam = searchParams.get("filters") || ""; // e.g. "Food,Hotlines"
+  const filtersParam = searchParams.get("filters") || "";
 
   useEffect(() => {
     // Fetch all resources once on load.
@@ -42,7 +41,7 @@ export default function DatabasePage() {
             docData.Organization_Name.trim() !== "" &&
             docData.Organization_Name !== "Unnamed Resource"
           ) {
-            data.push({ id: doc.id, ...docData });
+            data.push({ ...docData, id: doc.id });
           }
         });
 
@@ -100,22 +99,79 @@ export default function DatabasePage() {
     setFilteredResources(results);
   }, [allResources, searchText, filtersParam]);
 
+  const styles = {
+    container: {
+      maxWidth: "1200px",
+      margin: "0 auto",
+      padding: "2rem 1rem",
+      fontFamily: "Arial, sans-serif",
+    },
+    backButton: {
+      display: "inline-flex",
+      alignItems: "center",
+      fontSize: "1.2rem",
+      color: "#000",
+      marginBottom: "1.5rem",
+      cursor: "pointer",
+      background: "none",
+      border: "none",
+      padding: 0,
+    },
+    backArrow: {
+      fontSize: "1.5rem",
+      marginRight: "0.5rem",
+    },
+    title: {
+      fontSize: "3rem",
+      fontWeight: "bold",
+      margin: "0 0 1rem 0",
+      color: "#0a2240",
+    },
+    description: {
+      fontSize: "1.25rem",
+      marginBottom: "2rem",
+      maxWidth: "800px",
+      lineHeight: "1.6",
+      color: "#333",
+    },
+    searchContainer: {
+      marginBottom: "2rem",
+      width: "100%",
+      border: "1px solid #ccc",
+      borderRadius: "4px",
+      overflow: "hidden",
+    },
+    divider: {
+      height: "1px",
+      backgroundColor: "#0a2240",
+      width: "100%",
+      margin: "2rem 0",
+    }
+  };
+
   return (
-    <div className={styles.container}>
-      <main className={styles.main} style={{ padding: "2rem" }}>
-        <h1>LGBTQIA2S+ Resource Database</h1>
-        <p>
-          Welcome to the LGBTQIA2S+ resource database. Here, you will find
-          resources in the Boston area. Apply filters below.
-        </p>
+    <div style={styles.container}>
+      <Link href="/" passHref>
+        <button style={styles.backButton}>
+          <span style={styles.backArrow}>←</span>
+        </button>
+      </Link>
+      
+      <h1 style={styles.title}>
+        LGBTQIA2S+<br />
+        Resource Database
+      </h1>
+      
+      <p style={styles.description}>
+        Welcome to the LGBTQIA2S+ resource database. Here, you will find
+        resources in the Boston area. Apply filters
+      </p>
 
-        {/* Passing handleFilter if you wish, 
-            but the primary logic is driven by the query params + the updated SearchBar now. */}
-        <SearchBar onFilter={() => {}} />
+      <SearchBar />
+      
+      <div style={styles.divider}></div>
 
-        {/* The ResourceList only shows "filteredResources" now. */}
-        <ResourceList resources={filteredResources} />
-      </main>
+      <ResourceList resources={filteredResources} />
     </div>
   );
 }

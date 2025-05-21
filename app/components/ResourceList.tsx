@@ -35,8 +35,13 @@ export default function ResourceList({ resources }: ResourceListProps) {
   }
 
   if (!resources || resources.length === 0) {
-    return <p>No resources found.</p>;
+    return (
+      <p style={{ color: "#000", fontSize: "16px", fontWeight: 500 }}>
+        No resources found.
+      </p>
+    );
   }
+
 
   const styles = {
     container: {
