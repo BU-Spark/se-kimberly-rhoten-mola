@@ -52,7 +52,9 @@ export default function Map({ markers = [], center }: MapProps) {
       console.log("Importing marker library...");
       google.maps
         .importLibrary("marker")
-        .then(({ AdvancedMarkerElement }) => {
+        .then((markerLib) => {
+          // Type assertion to access AdvancedMarkerElement
+          const { AdvancedMarkerElement } = markerLib as google.maps.MarkerLibrary;
           console.log("Marker library imported:", AdvancedMarkerElement);
           markers.forEach((markerData) => {
             const position = {
