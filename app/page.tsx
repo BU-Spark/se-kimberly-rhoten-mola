@@ -3,9 +3,11 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
-import Map from "./components/Map";
+
 import Search from "@/app/components/sections/Search";
 import Events from "@/app/components/sections/Events";
+import Map from "@/app/components/sections/Maps";
+
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/configfirebase";
 
@@ -114,10 +116,7 @@ export default function Home() {
         <Search onFilter={handleFilter} />
         <Events />
         <section className={styles.mapSection}>
-          <Map
-            markers={markers}
-            center={downtownBostonCenter}
-          />
+          <Map markers={markers} center={downtownBostonCenter} />
         </section>
       </main>
     </div>
