@@ -27,7 +27,7 @@ const Search: React.FC<SearchProps> = ({ onFilter }) => {
       width: "100%",
     },
     title: {
-      fontSize: "3.5rem",
+      fontSize: "3.7rem",
       fontWeight: "700",
       marginBottom: "1.5rem",
       lineHeight: "1.1",
@@ -45,7 +45,7 @@ const Search: React.FC<SearchProps> = ({ onFilter }) => {
     },
     button: {
       padding: "1rem 2rem",
-      backgroundColor: "#D32F2F",
+      backgroundColor: "#FB4D43",
       color: "white",
       border: "none",
       borderRadius: "8px",
@@ -55,6 +55,7 @@ const Search: React.FC<SearchProps> = ({ onFilter }) => {
       alignItems: "center",
       gap: "0.5rem",
       textDecoration: "none",
+      textTransform: "uppercase",
     },
     svg: {
       width: "20px",
@@ -82,7 +83,7 @@ const Search: React.FC<SearchProps> = ({ onFilter }) => {
       </section>
 
       <div style={styles.buttonWrapper}>
-        <a href="/emergency" style={styles.button}>
+        <a href="/emergency" style={styles.button as React.CSSProperties}>
           <svg
             style={styles.svg}
             xmlns="http://www.w3.org/2000/svg"
