@@ -276,7 +276,7 @@ type HeaderProps = {
 export default function Header({ isSidebarOpen, toggleSidebar }: HeaderProps) {
   const navItems = [
     { label: "DATABASE", href: "/database" },
-    { label: "INTERACTIVE MAP", href: "/map" },
+    { label: "MAP", href: "/map" },
     { label: "FEEDBACK", href: "/feedback" },
   ];
 
@@ -290,7 +290,7 @@ export default function Header({ isSidebarOpen, toggleSidebar }: HeaderProps) {
             <span className="bar2" />
             <span className="bar3" />
           </AnimatedMenuIcon>
-          <MenuText>{isSidebarOpen ? "CLOSE" : "MENU"}</MenuText>
+          <MenuText>{isSidebarOpen ? "" : "MENU"}</MenuText>
         </MenuButton>
         {/* Logo */}
         <Link href="https://www.boston.gov/">
