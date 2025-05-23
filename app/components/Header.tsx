@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 
 import { styled } from "@stitches/react";
@@ -154,6 +154,33 @@ const SearchIcon = styled(MagnifyingGlassIcon, {
   height: 42,
 });
 
+// X icon for closing search
+const CloseIcon = styled("div", {
+  width: 24,
+  height: 24,
+  position: "relative",
+  
+  "&::before, &::after": {
+    content: "''",
+    position: "absolute",
+    width: "100%",
+    height: 4,
+    backgroundColor: colors.freedomTrailRed,
+    top: "50%",
+    left: 0,
+    marginTop: -2,
+    borderRadius: 2,
+  },
+  
+  "&::before": {
+    transform: "rotate(45deg)",
+  },
+  
+  "&::after": {
+    transform: "rotate(-45deg)",
+  }
+});
+
 // Animated Hamburger/X Icon
 const AnimatedMenuIcon = styled("div", {
   width: 32,
@@ -268,6 +295,103 @@ const SealImage = styled("img", {
   width: "auto",
 });
 
+// Search dropdown
+const SearchOverlay = styled("div", {
+  position: "fixed",
+  top: "60px",
+  left: 0,
+  right: 0,
+  backgroundColor: colors.white,
+  padding: "1.5rem 0 1rem",
+  boxShadow: "0 4px 8px rgba(0,0,0,0.05)",
+  zIndex: 999,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  transition: "transform 0.3s ease, opacity 0.3s ease",
+  transform: "translateY(-100%)",
+  opacity: 0,
+  variants: {
+    open: {
+      true: {
+        transform: "translateY(0)",
+        opacity: 1,
+      },
+    },
+  },
+});
+
+const SearchContainer = styled("div", {
+  width: "100%",
+  maxWidth: "1000px",
+  margin: "0 auto",
+  padding: "0 1rem",
+  position: "relative",
+});
+
+const SearchForm = styled("form", {
+  display: "flex",
+  flexDirection: "column",
+  width: "100%",
+  position: "relative",
+});
+
+const SearchInput = styled("input", {
+  width: "100%",
+  border: "none",
+  fontSize: "4rem",
+  padding: "0.5rem 0",
+  backgroundColor: "transparent",
+  color: colors.freedomTrailRed,
+  fontFamily: typography.fontFamily.secondary,
+  "&:focus": {
+    outline: "none",
+  },
+  "&::placeholder": {
+    color: "rgba(251, 77, 66, 0.6)",
+    opacity: 1,
+  },
+  "&:focus::placeholder": {
+    opacity: 0.5,
+  },
+});
+
+const SearchDivider = styled("div", {
+  width: "100%",
+  height: "8px",
+  backgroundColor: colors.charlesBlue,
+  marginBottom: "0.5rem",
+  opacity: 0.8,
+});
+
+const SearchText = styled("div", {
+  fontSize: "1rem",
+  fontWeight: typography.fontWeight.bold,
+  color: colors.charlesBlue,
+  fontFamily: typography.fontFamily.primary,
+  textTransform: "uppercase",
+  marginTop: "0.5rem",
+});
+
+const SearchSubmit = styled("button", {
+  backgroundColor: "transparent",
+  border: "none",
+  padding: "0",
+  cursor: "pointer",
+  color: colors.freedomTrailRed,
+  position: "absolute",
+  right: "0",
+  top: "0.5rem",
+  zIndex: 2,
+  transform: "scaleX(-1)",
+  
+  "& svg": {
+    width: "4.5rem",
+    height: "4.5rem",
+  }
+});
+
 type HeaderProps = {
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
@@ -280,52 +404,93 @@ export default function Header({ isSidebarOpen, toggleSidebar }: HeaderProps) {
     { label: "FEEDBACK", href: "/feedback" },
   ];
 
-  return (
-    <StyledHeader>
-      <LeftSection>
-        {/* Menu Button with Animated Icon */}
-        <MenuButton onClick={toggleSidebar} aria-label={isSidebarOpen ? "Close menu" : "Open menu"}>
-          <AnimatedMenuIcon open={isSidebarOpen}>
-            <span className="bar1" />
-            <span className="bar2" />
-            <span className="bar3" />
-          </AnimatedMenuIcon>
-          <MenuText>{isSidebarOpen ? "" : "MENU"}</MenuText>
-        </MenuButton>
-        {/* Logo */}
-        <Link href="https://www.boston.gov/">
-          <LogoSection style={{ cursor: "pointer" }}>
-            <CityText>
-              CITY <OfText>of</OfText> <BostonText>BOSTON</BostonText>
-            </CityText>
-          </LogoSection>
-        </Link>
-        {/* Divider */}
-        <Divider />
-        {/* Mayor Name */}
-        <MayorSection>
-          <MayorText>Mayor Michelle Wu</MayorText>
-        </MayorSection>
-      </LeftSection>
-      
-      <CenterSection>
-        <SealImage src={images.digital_seal_black} alt="City of Boston Digital Seal" />
-      </CenterSection>
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-      <RightSection>
-        {/* Header Navigation Menu */}
-        <HeaderNav>
-          {navItems.map((item) => (
-            <Link key={item.label} href={item.href} passHref legacyBehavior>
-              <HeaderNavLink>{item.label}</HeaderNavLink>
-            </Link>
-          ))}
-        </HeaderNav>
-        {/* Search Button */}
-        <SearchButton>
-          <SearchIcon />
-        </SearchButton>
-      </RightSection>
-    </StyledHeader>
+  const toggleSearch = () => {
+    setIsSearchOpen(!isSearchOpen);
+    if (isSearchOpen) {
+      setSearchQuery("");
+    }
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      window.location.href = `https://www.boston.gov/search?utf8=%E2%9C%93&query=${encodeURIComponent(searchQuery)}`;
+    }
+  };
+
+  return (
+    <>
+      <StyledHeader>
+        <LeftSection>
+          {/* Menu Button with Animated Icon */}
+          <MenuButton onClick={toggleSidebar} aria-label={isSidebarOpen ? "Close menu" : "Open menu"}>
+            <AnimatedMenuIcon open={isSidebarOpen}>
+              <span className="bar1" />
+              <span className="bar2" />
+              <span className="bar3" />
+            </AnimatedMenuIcon>
+            <MenuText>{isSidebarOpen ? "" : "MENU"}</MenuText>
+          </MenuButton>
+          {/* Logo */}
+          <Link href="https://www.boston.gov/">
+            <LogoSection style={{ cursor: "pointer" }}>
+              <CityText>
+                CITY <OfText>of</OfText> <BostonText>BOSTON</BostonText>
+              </CityText>
+            </LogoSection>
+          </Link>
+          {/* Divider */}
+          <Divider />
+          {/* Mayor Name */}
+          <MayorSection>
+            <MayorText>Mayor Michelle Wu</MayorText>
+          </MayorSection>
+        </LeftSection>
+        
+        <CenterSection>
+          <SealImage src={images.digital_seal_black} alt="City of Boston Digital Seal" />
+        </CenterSection>
+
+        <RightSection>
+          {/* Header Navigation Menu */}
+          <HeaderNav>
+            {navItems.map((item) => (
+              <Link key={item.label} href={item.href} passHref legacyBehavior>
+                <HeaderNavLink>{item.label}</HeaderNavLink>
+              </Link>
+            ))}
+          </HeaderNav>
+          {/* Search Button */}
+          <SearchButton onClick={toggleSearch} aria-label={isSearchOpen ? "Close search" : "Open search"}>
+            {isSearchOpen ? <CloseIcon /> : <SearchIcon />}
+          </SearchButton>
+        </RightSection>
+      </StyledHeader>
+
+      {/* Search Overlay */}
+      <SearchOverlay open={isSearchOpen}>
+        <SearchContainer>
+          <SearchForm onSubmit={handleSearchSubmit} role="search">
+            <SearchInput
+              id="search-input"
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              autoFocus={isSearchOpen}
+              aria-label="Search the City of Boston website"
+            />
+            <SearchSubmit type="submit" aria-label="Submit search">
+              <SearchIcon />
+            </SearchSubmit>
+            <SearchDivider />
+            <SearchText>SEARCH</SearchText>
+          </SearchForm>
+        </SearchContainer>
+      </SearchOverlay>
+    </>
   );
 }
