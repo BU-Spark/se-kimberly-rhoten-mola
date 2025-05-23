@@ -12,14 +12,16 @@ export interface MarkerData {
   lng: number;
   Organization_Name?: string;
   Organization_Address?: string;
+  Type_Of_Service?: string | string[];
 }
 
 interface MapProps {
   markers?: MarkerData[];
-  center?: { lat: number; lng: number }; // New prop for a custom center
+  center?: { lat: number; lng: number }; 
+  onMarkerClick?: (marker: MarkerData) => void;
 }
 
-export default function Map({ markers = [], center }: MapProps) {
+export default function Map({ markers = [], center, onMarkerClick }: MapProps) {
   const mapRef = useRef<google.maps.Map | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const advancedMarkersRef = useRef<any[]>([]);
@@ -29,47 +31,39 @@ export default function Map({ markers = [], center }: MapProps) {
   const onMapLoad = (map: google.maps.Map) => {
     mapRef.current = map;
     setMapLoaded(true);
-    console.log("Map loaded, mapRef set:", map);
   };
 
   useEffect(() => {
-    console.log(
-      "Map effect triggered. Markers:",
-      markers,
-      "MapLoaded:",
-      mapLoaded,
-    );
     if (mapRef.current && mapLoaded && "importLibrary" in google.maps) {
-      console.log("Clearing previous markers:", advancedMarkersRef.current);
       advancedMarkersRef.current.forEach((marker) => marker.setMap(null));
       advancedMarkersRef.current = [];
 
       if (infoWindowRef.current === null) {
         infoWindowRef.current = new google.maps.InfoWindow();
-        console.log("Created new info window instance.");
       }
 
-      console.log("Importing marker library...");
       google.maps
         .importLibrary("marker")
         .then((markerLib) => {
           // Type assertion to access AdvancedMarkerElement
           const { AdvancedMarkerElement } = markerLib as google.maps.MarkerLibrary;
-          console.log("Marker library imported:", AdvancedMarkerElement);
           markers.forEach((markerData) => {
             const position = {
               lat: markerData.lat || defaultCenter.lat,
               lng: markerData.lng || defaultCenter.lng,
             };
-            console.log("Creating advanced marker for:", markerData);
             const advancedMarker = new AdvancedMarkerElement({
               map: mapRef.current!,
               position,
               title: markerData.Organization_Name,
               gmpClickable: true,
             });
-            advancedMarker.addListener("gmp-click", () => {
-              console.log("Marker clicked:", markerData);
+            advancedMarker.addListener("gmp-click", () => {              
+              // Call the onMarkerClick callback if provided
+              if (onMarkerClick) {
+                onMarkerClick(markerData);
+              }
+
               infoWindowRef.current!.close();
               const contentDiv = document.createElement("div");
               contentDiv.style.fontSize = "14px";
@@ -84,6 +78,16 @@ export default function Map({ markers = [], center }: MapProps) {
               addrEl.textContent = markerData.Organization_Address || "Address not available";
               addrEl.style.marginBottom = "4px";
               contentDiv.appendChild(addrEl);
+
+              // Add Type_Of_Service if available
+              if (markerData.Type_Of_Service) {
+                const serviceEl = document.createElement("div");
+                serviceEl.textContent = `Service: ${markerData.Type_Of_Service}`;
+                serviceEl.style.marginBottom = "4px";
+                serviceEl.style.fontStyle = "italic";
+                contentDiv.appendChild(serviceEl);
+              }
+              
               const detailLink = document.createElement("a");
               detailLink.href = `/resource/${markerData.id}`;
               detailLink.textContent = "View Details";
@@ -92,30 +96,22 @@ export default function Map({ markers = [], center }: MapProps) {
               detailLink.style.color = "#0070f3";
               detailLink.style.textDecoration = "underline";
               contentDiv.appendChild(detailLink);
-              console.log("Setting info window content:", contentDiv);
               infoWindowRef.current!.setContent(contentDiv);
               infoWindowRef.current!.open(mapRef.current, advancedMarker);
-              console.log("Opened info window.");
             });
             advancedMarkersRef.current.push(advancedMarker);
-            console.log("Stored advanced marker:", advancedMarker);
           });
         })
         .catch((error) => {
           console.error("Error importing marker library:", error);
         });
-    } else {
-      console.log(
-        "Map is not loaded yet or google.maps.importLibrary not available.",
-      );
-    }
-  }, [markers, mapLoaded]);
+    } else { }
+  }, [markers, mapLoaded, onMarkerClick]);
 
   return (
     <GoogleMap
-      mapContainerStyle={{ width: "100%", height: "400px" }}
+      mapContainerStyle={{ width: "100%", height: "100%" }}
       center={
-        // If a center prop is provided, use it. Otherwise, use marker or default center.
         center ||
         (markers.length > 0
           ? { lat: markers[0].lat, lng: markers[0].lng }
@@ -123,9 +119,12 @@ export default function Map({ markers = [], center }: MapProps) {
       }
       zoom={12}
       onLoad={onMapLoad}
-      options={{ mapId: "MOLA" }} // Replace with your actual Map ID if available.
+      options={{ 
+        mapId: "MOLA",
+        streetViewControl: false,
+        fullscreenControl: false,
+      }}
     >
-      {/* Markers are added via useEffect */}
     </GoogleMap>
   );
 }
