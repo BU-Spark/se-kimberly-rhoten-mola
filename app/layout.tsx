@@ -110,7 +110,7 @@ export default function RootLayout({
               </div>
               {/* HELP / 311 section */}
               <a 
-                href="tel:311"
+                href="https://www.boston.gov/departments/boston-311"
                 style={styles.helpLink}
                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = colors.supportingBlues.desaturated}
                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = colors.charlesBlue}

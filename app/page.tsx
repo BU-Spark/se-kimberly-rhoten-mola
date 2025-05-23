@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
 
 import Search from "@/app/components/sections/Search";
-import Events from "@/app/components/sections/Events";
 import Map from "@/app/components/sections/Maps";
 
 import { collection, getDocs } from "firebase/firestore";
@@ -114,7 +113,6 @@ export default function Home() {
     <div className={styles.container}>
       <main className={styles.main}>
         <Search onFilter={handleFilter} />
-        <Events />
         <section className={styles.mapSection}>
           <Map markers={markers} center={downtownBostonCenter} />
         </section>

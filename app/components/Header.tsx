@@ -293,7 +293,7 @@ export default function Header({ isSidebarOpen, toggleSidebar }: HeaderProps) {
           <MenuText>{isSidebarOpen ? "CLOSE" : "MENU"}</MenuText>
         </MenuButton>
         {/* Logo */}
-        <Link href="/">
+        <Link href="https://www.boston.gov/">
           <LogoSection style={{ cursor: "pointer" }}>
             <CityText>
               CITY <OfText>of</OfText> <BostonText>BOSTON</BostonText>

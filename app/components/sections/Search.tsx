@@ -83,7 +83,7 @@ const Search: React.FC<SearchProps> = ({ onFilter }) => {
       </section>
 
       <div style={styles.buttonWrapper}>
-        <a href="/emergency" style={styles.button as React.CSSProperties}>
+        <a href="https://www.boston.gov/departments/boston-311" style={styles.button as React.CSSProperties}>
           <svg
             style={styles.svg}
             xmlns="http://www.w3.org/2000/svg"
