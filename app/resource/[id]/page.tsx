@@ -22,15 +22,12 @@ export default function ResourceDetailPage() {
   useEffect(() => {
     const fetchResource = async () => {
       try {
-        console.log("Fetching resource for id:", id);
         const docRef = doc(db, "Organizations", String(id));
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
-          console.log("Fetched resource:", data);
           setResource(data);
         } else {
-          console.log("No such document in Firestore for id:", id);
         }
       } catch (error) {
         console.error("Error fetching resource:", error);
@@ -50,10 +47,8 @@ export default function ResourceDetailPage() {
       !resource.lng &&
       resource.Organization_Address
     ) {
-      console.log("Geocoding address:", resource.Organization_Address);
       geocodeAddress(resource.Organization_Address)
         .then(({ lat, lng }) => {
-          console.log("Geocoded coordinates:", lat, lng);
           setCoordinates({ lat, lng });
         })
         .catch((error) => {
@@ -68,12 +63,10 @@ export default function ResourceDetailPage() {
   ): Promise<{ lat: number; lng: number }> {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
     const encoded = encodeURIComponent(address);
-    console.log("Calling Geocoding API for address:", address);
     const res = await fetch(
       `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${apiKey}`
     );
     const data = await res.json();
-    console.log("Geocoding API response:", data);
     if (data.status === "OK" && data.results.length > 0) {
       return data.results[0].geometry.location;
     } else {

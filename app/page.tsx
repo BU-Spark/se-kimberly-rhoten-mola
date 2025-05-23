@@ -23,9 +23,6 @@ async function geocodeAddress(
 ): Promise<{ lat: number; lng: number }> {
   const normalized = address.toLowerCase().trim();
   if (normalized === "n/a" || normalized === "virtual" || normalized === "") {
-    console.log(
-      `Address "${address}" is not valid; using fallback coordinates.`,
-    );
     return { lat: 42.3601, lng: -71.0589 };
   }
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -34,7 +31,6 @@ async function geocodeAddress(
     `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${apiKey}`
   );
   const data = await res.json();
-  console.log("Geocoding API response for address:", address, data);
   if (data.status === "OK" && data.results.length > 0) {
     return data.results[0].geometry.location;
   } else {
@@ -92,7 +88,6 @@ export default function Home() {
           geocodeAddressIfNeeded(docData),
         );
         const finalMarkers = await Promise.all(geocodedPromises);
-        console.log("Final markers:", finalMarkers);
         setMarkers(finalMarkers);
       } catch (error) {
         console.error("Error fetching organizations:", error);
@@ -105,9 +100,7 @@ export default function Home() {
   const handleFilter = (filters: {
     category?: string;
     subcategory?: string;
-  }) => {
-    console.log("Filters from SearchBar:", filters);
-  };
+  }) => {  };
 
   return (
     <div className={styles.container}>
