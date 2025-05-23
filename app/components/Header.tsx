@@ -2,19 +2,31 @@
 
 import React from "react";
 import Link from "next/link";
-import * as NavigationMenu from "@radix-ui/react-navigation-menu";
-import * as Dialog from "@radix-ui/react-dialog";
+
 import { styled } from "@stitches/react";
-import { Cross1Icon, HamburgerMenuIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+
+import { colors, typography, spacing, images } from "../styles/constants";
 
 // Styled components
 const StyledHeader = styled("header", {
-  backgroundColor: "#ffffff",
-  height: "12vh",
+  backgroundColor: colors.white,
+  height: "60px",
   width: "100%",
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
+  borderBottom: `1px solid ${colors.supportingGrays.light}`,
+  padding: "0 16px 0 0",
+  position: "fixed",
+  top: 0,
+  left: 0,
+  right: 0,
+  zIndex: 1000,
+  '@media (max-width: 768px)': {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
 });
 
 const LeftSection = styled("div", {
@@ -24,191 +36,244 @@ const LeftSection = styled("div", {
 });
 
 const MenuButton = styled("button", {
-  width: "118px",
-  height: "100%",
-  backgroundColor: "#FB4D43",
+  width: "70px",
+  height: "60px",
+  backgroundColor: colors.freedomTrailRed,
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
   border: "none",
   cursor: "pointer",
-  color: "#ffffff",
+  color: colors.white,
   padding: 0,
-});
-
-const MenuIcon = styled(HamburgerMenuIcon, {
-  width: 55,
-  height: 55,
+  transition: "background-color 0.1s ease",
+  margin: 0,
 });
 
 const MenuText = styled("span", {
-  color: "#ffffff",
-  fontSize: "1rem",
-  fontWeight: 800,
-  letterSpacing: "0.05em",
+  color: colors.white,
+  fontSize: "0.7rem",
+  fontWeight: typography.fontWeight.bold,
+  letterSpacing: "0.02em",
+  width: "32px",
+  textAlign: "center",
+  display: "block",
+  textTransform: "uppercase",
+  lineHeight: 1,
+  padding: 0,
+  margin: "3px 0 0 0"
 });
 
 const LogoSection = styled("div", {
   display: "flex",
   alignItems: "center",
-  paddingLeft: "24px",
-  paddingRight: "16px",
+  paddingLeft: spacing.md,
+  paddingRight: spacing.sm,
+  gap: spacing.xs,
 });
 
 const CityText = styled("span", {
-  color: "#102738",
-  fontWeight: 700,
-  fontSize: "2.2rem",
+  color: colors.black,
+  fontWeight: typography.fontWeight.extraBold,
+  fontSize: "1.25rem",
+  fontFamily: typography.fontFamily.primary, 
 });
 
 const OfText = styled("span", {
-  color: "#102738",
-  fontWeight: 500,
+  color: colors.black,
+  fontWeight: typography.fontWeight.regular,
   fontStyle: "italic",
-  fontSize: "1.9rem",
+  fontSize: "0.9rem",
+  fontFamily: typography.fontFamily.secondary,
 });
 
 const BostonText = styled("span", {
-  color: "#102738",
-  fontWeight: 800,
-  fontSize: "2.2rem",
+  color: colors.black,
+  fontWeight: typography.fontWeight.extraBold,
+  fontSize: "1.25rem",
+  fontFamily: typography.fontFamily.primary, 
   textDecoration: "underline",
-  textDecorationColor: "#FB4D43", 
+  textDecorationColor: colors.freedomTrailRed,
+  textUnderlineOffset: "0.15em",
+  textDecorationThickness: "3px",
+  marginLeft: "0.15em",
 });
 
 const Divider = styled("div", {
-  height: "40px",
-  borderRight: "1px solid #102738",
+  height: "30px",
+  borderRight: "1px solid black",
   alignSelf: "center",
-});
-
-const MayorSection = styled("div", {
-  display: "flex",
-  alignItems: "center",
-  paddingLeft: "16px",
-});
-
-const MayorText = styled("span", {
-  color: "#102738",
-  fontWeight: 400,
-  fontSize: "1.25rem",
-});
-
-const RightSection = styled("div", {
-  display: "flex",
-  height: "100%",
-  alignItems: "center",
-});
-
-const StyledNavigationMenu = styled(NavigationMenu.Root, {
-  height: "100%",
-  display: "flex",
-
-  "@media (max-width: 768px)": {
-    display: "none",
+  margin: `0 ${spacing.sm}`,
+  '@media (max-width: 1024px)': {
+    display: 'none',
   },
 });
 
-const StyledNavigationMenuList = styled(NavigationMenu.List, {
-  display: "flex",
-  height: "100%",
-  listStyle: "none",
-  margin: 0,
-  padding: 0,
-});
-
-const StyledNavigationMenuItem = styled(NavigationMenu.Item, {
-  height: "100%",
-});
-
-const StyledNavigationMenuLink = styled(NavigationMenu.Link, {
-  color: "#102738",
-  padding: "0 16px",
-  height: "100%",
-  display: "flex",
+const MayorSection = styled("div", {
+  display: "none",
   alignItems: "center",
-  textDecoration: "none",
-  fontWeight: 500,
-  fontSize: "0.95rem",
+  paddingLeft: spacing.sm,
+  '@media (min-width: 1024px)': {
+    display: 'flex',
+  },
+});
 
-  "&:hover": {
-    color: "#e25c4d",
+const MayorText = styled("span", {
+  color: colors.charlesBlue,
+  fontWeight: typography.fontWeight.regular,
+  fontSize: "1rem",
+  fontFamily: typography.fontFamily.secondary, 
+  fontStyle: "italic",
+});
+
+const RightSection = styled("div", {
+  display: "none",
+  height: "100%",
+  alignItems: "center",
+  '@media (min-width: 800px)': {
+    display: 'flex',
   },
 });
 
 const SearchButton = styled("button", {
-  width: "74px",
+  width: "60px",
   height: "100%",
   border: "none",
   backgroundColor: "transparent",
-  color: "#288BE5",
+  color: colors.freedomTrailRed,
   cursor: "pointer",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-
-  "&:hover": {
-    color: "#e25c4d",
-  },
+  transform: "scaleX(-1)",
 });
 
 const SearchIcon = styled(MagnifyingGlassIcon, {
-  width: 40,            
-  height: 40,
-  strokeWidth: 5.5,      
+  width: 42,
+  height: 42,
 });
 
-
-// Drawer styled components
-const DialogOverlay = styled(Dialog.Overlay, {
-  backgroundColor: "rgba(0, 0, 0, 0.5)",
-  position: "fixed",
-  inset: 0,
-});
-
-const DialogContent = styled(Dialog.Content, {
-  backgroundColor: "white",
-  borderRadius: "0",
-  position: "fixed",
-  top: 0,
-  left: 0,
-  bottom: 0,
-  width: "250px",
-  padding: "25px",
-  boxShadow: "0 2px 10px rgba(0, 0, 0, 0.12)",
-});
-
-const DialogTitle = styled(Dialog.Title, {
-  margin: 0,
-  fontWeight: 600,
-  color: "#102738",
-  fontSize: "18px",
-});
-
-const DialogClose = styled(Dialog.Close, {
-  position: "absolute",
-  top: "10px",
-  right: "10px",
-  background: "transparent",
-  border: "none",
+// Animated Hamburger/X Icon
+const AnimatedMenuIcon = styled("div", {
+  width: 32,
+  height: 32,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  position: "relative",
   cursor: "pointer",
-});
-
-const NavigationLink = styled("a", {
-  display: "block",
-  padding: "12px 0",
-  color: "#102738",
-  textDecoration: "none",
-  borderBottom: "1px solid #e9e9e9",
-  fontWeight: 500,
-
-  "&:hover": {
-    color: "#e25c4d",
+  "span": {
+    display: "block",
+    position: "absolute",
+    height: 4,
+    width: 24,
+    background: colors.white,
+    borderRadius: 2,
+    transition: "all 0.4s cubic-bezier(.4,0,.2,1)",
+  },
+  ".bar1": {
+    top: 6,
+    left: 4,
+    transitionProperty: "transform, opacity, background",
+  },
+  ".bar2": {
+    top: 14,
+    left: 4,
+    transitionProperty: "opacity, transform, background",
+  },
+  ".bar3": {
+    top: 22,
+    left: 4,
+    transitionProperty: "transform, opacity, background",
+  },
+  variants: {
+    open: {
+      true: {
+        ".bar1": {
+          transform: "translateY(8px) rotate(45deg)",
+          transitionDelay: "0s",
+        },
+        ".bar2": {
+          opacity: 0,
+          transitionDelay: "0.1s",
+        },
+        ".bar3": {
+          transform: "translateY(-8px) rotate(-45deg)",
+          transitionDelay: "0.2s",
+        },
+      },
+      false: {
+        ".bar1": {
+          transform: "none",
+          transitionDelay: "0.2s",
+        },
+        ".bar2": {
+          opacity: 1,
+          transitionDelay: "0.1s",
+        },
+        ".bar3": {
+          transform: "none",
+          transitionDelay: "0s",
+        },
+      },
+    },
   },
 });
 
-export default function Header() {
+// Header navigation menu (simple flex row)
+const HeaderNav = styled("nav", {
+  display: "flex",
+  alignItems: "center",
+  gap: spacing.md,
+  marginLeft: spacing.md,
+});
+
+const HeaderNavLink = styled("a", {
+  color: colors.charlesBlue,
+  fontFamily: typography.fontFamily.primary,
+  fontWeight: typography.fontWeight.regular,
+  fontSize: "0.9rem",
+  textTransform: "uppercase",
+  letterSpacing: "0.04em",
+  textDecoration: "none",
+  padding: `${spacing.xs} 0`,
+  cursor: "pointer",
+  position: "relative",
+  
+  '&:hover, &:focus': {
+    color: colors.freedomTrailRed,
+  },
+});
+
+const CenterSection = styled("div", {
+  position: "absolute",
+  left: "50%",
+  bottom: 0,
+  transform: "translateX(-50%) translateY(50%)",
+  display: "none",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "auto",
+  backgroundColor: colors.white,
+  borderRadius: "50%",
+  padding: "10px",
+  '@media (min-width: 1024px)': {
+    display: 'flex',
+  },
+});
+
+const SealImage = styled("img", {
+  height: "90px",
+  width: "auto",
+});
+
+type HeaderProps = {
+  isSidebarOpen: boolean;
+  toggleSidebar: () => void;
+};
+
+export default function Header({ isSidebarOpen, toggleSidebar }: HeaderProps) {
   const navItems = [
     { label: "DATABASE", href: "/database" },
     { label: "INTERACTIVE MAP", href: "/map" },
@@ -218,36 +283,15 @@ export default function Header() {
   return (
     <StyledHeader>
       <LeftSection>
-        {/* Menu Button with Dialog */}
-        <Dialog.Root>
-          <Dialog.Trigger asChild>
-            <MenuButton>
-              <MenuIcon />
-              <MenuText>MENU</MenuText>
-            </MenuButton>
-          </Dialog.Trigger>
-          
-          <Dialog.Portal>
-            <DialogOverlay />
-            <DialogContent>
-              <DialogTitle>
-                Navigation Menu
-              </DialogTitle>
-              <DialogClose>
-                <Cross1Icon width={20} height={20} />
-              </DialogClose>
-              
-              <div style={{ marginTop: "40px" }}>
-                {navItems.map((item) => (
-                  <NavigationLink key={item.label} href={item.href}>
-                    {item.label}
-                  </NavigationLink>
-                ))}
-              </div>
-            </DialogContent>
-          </Dialog.Portal>
-        </Dialog.Root>
-
+        {/* Menu Button with Animated Icon */}
+        <MenuButton onClick={toggleSidebar} aria-label={isSidebarOpen ? "Close menu" : "Open menu"}>
+          <AnimatedMenuIcon open={isSidebarOpen}>
+            <span className="bar1" />
+            <span className="bar2" />
+            <span className="bar3" />
+          </AnimatedMenuIcon>
+          <MenuText>{isSidebarOpen ? "CLOSE" : "MENU"}</MenuText>
+        </MenuButton>
         {/* Logo */}
         <Link href="/">
           <LogoSection style={{ cursor: "pointer" }}>
@@ -256,30 +300,27 @@ export default function Header() {
             </CityText>
           </LogoSection>
         </Link>
-
         {/* Divider */}
         <Divider />
-
         {/* Mayor Name */}
         <MayorSection>
           <MayorText>Mayor Michelle Wu</MayorText>
         </MayorSection>
       </LeftSection>
+      
+      <CenterSection>
+        <SealImage src={images.digital_seal_black} alt="City of Boston Digital Seal" />
+      </CenterSection>
 
       <RightSection>
-        {/* Navigation Menu */}
-        <StyledNavigationMenu>
-          <StyledNavigationMenuList>
-            {navItems.map((item) => (
-              <StyledNavigationMenuItem key={item.label}>
-                <StyledNavigationMenuLink asChild>
-                  <Link href={item.href}>{item.label}</Link>
-                </StyledNavigationMenuLink>
-              </StyledNavigationMenuItem>
-            ))}
-          </StyledNavigationMenuList>
-        </StyledNavigationMenu>
-
+        {/* Header Navigation Menu */}
+        <HeaderNav>
+          {navItems.map((item) => (
+            <Link key={item.label} href={item.href} passHref legacyBehavior>
+              <HeaderNavLink>{item.label}</HeaderNavLink>
+            </Link>
+          ))}
+        </HeaderNav>
         {/* Search Button */}
         <SearchButton>
           <SearchIcon />
