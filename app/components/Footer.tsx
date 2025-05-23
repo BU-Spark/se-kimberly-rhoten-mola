@@ -2,154 +2,177 @@
 
 import React from "react";
 import { styled } from "@stitches/react";
+import { typography, colors } from "../styles/constants";
 
 // Styled components
 const StyledFooter = styled("footer", {
   backgroundColor: "#0C273A",
   color: "white",
-  padding: "3rem 2rem 2rem",
+  padding: "0.9rem 0.9rem 0.9rem",
   width: "100%",
   display: "flex",
   flexDirection: "column",
-  alignItems: "center",
+  alignItems: "flex-start",
 });
 
 const FooterContainer = styled("div", {
   display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
+  flexDirection: "column",
+  alignItems: "flex-start",
   width: "100%",
-  maxWidth: "1200px",
-  flexWrap: "nowrap",
   gap: "2rem",
+});
+
+
+const TopSection = styled("div", {
+  display: "flex",
+  width: "100%",
+  justifyContent: "space-between",
+});
+
+const LeftSection = styled("div", {
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  flex: "1",
 });
 
 const LogoContainer = styled("div", {
   position: "relative",
-  marginRight: "2rem",
-  transition: "transform 0.3s ease",
-
-  "&:hover": {
-    transform: "scale(1.05)",
-  }
-});
-
-const Logo = styled("span", {
-  color: "white",
-  fontSize: "3rem",
-  fontWeight: "800",
-  display: "inline-block",
-  fontFamily: "'Inter', sans-serif",
-});
-
-const Underline = styled("div", {
-  position: "absolute",
-  bottom: "0",
-  left: "0",
-  width: "100%",
-  height: "4px",
-  background: "#FB4D43",
-  borderRadius: "4px",
+  width: "125px",
+  height: "125px",
+  flexShrink: 0,
+  marginTop: "0.25rem",
+  
+  "& img": {
+    width: "100%",
+    height: "100%",
+    objectFit: "contain",
+  },
 });
 
 const FooterNav = styled("nav", {
   display: "flex",
-  gap: "2rem",
-  flexWrap: "nowrap",
+  gap: "0.5rem 2rem", 
+  flexWrap: "wrap",
+  maxWidth: "50%",
+  alignItems: "flex-start",
 });
 
 const FooterLink = styled("a", {
-  color: "#51ACFF",
+  color: colors.supportingBlues.bright,
   textDecoration: "none",
-  fontSize: "0.875rem",
-  fontWeight: "500",
+  fontSize: typography.fontSize.small,
+  fontWeight: typography.fontWeight.medium,
+  fontFamily: typography.fontFamily.primary,
   transition: "all 0.2s",
   position: "relative",
-  padding: "0.25rem 0",
+  padding: "0.15rem 0",
+  whiteSpace: "nowrap",
+  letterSpacing: typography.letterSpacing.wide,
 
   "&:hover": {
-    color: "white",
-    "&::after": {
-      width: "100%",
-      opacity: 1,
-    }
-  },
-  "&::after": {
-    content: "''",
-    position: "absolute",
-    bottom: "0",
-    left: "0",
-    width: "0%",
-    height: "2px",
-    backgroundColor: "#FB4D43",
-    transition: "width 0.3s ease, opacity 0.3s ease",
-    opacity: 0,
+    color: colors.freedomTrailRed,
   }
 });
 
-const ReportButton = styled("button", {
-  backgroundColor: "rgba(255, 255, 255, 0.1)",
-  color: "#FCBC05",
-  border: "none",
-  borderRadius: "8px",
-  padding: "0.75rem 1.25rem",
+const ReportSection = styled("div", {
   display: "flex",
   alignItems: "center",
-  gap: "0.75rem",
+  gap: "1rem",
+  marginLeft: "auto",
   cursor: "pointer",
-  fontWeight: "600",
-  transition: "all 0.2s ease",
-  backdropFilter: "blur(10px)",
-
-  "&:hover": {
-    backgroundColor: "rgba(255, 255, 255, 0.15)",
-    transform: "translateY(-2px)",
-    boxShadow: "0 4px 12px rgba(255, 193, 7, 0.15)",
-  },
-
-  "&:active": {
-    transform: "translateY(0)",
-  }
 });
 
-const ReportIcon = styled("span", {
-  background: "white",
+const ReportLink = styled("a", {
+  display: "flex",
+  alignItems: "center",
+  gap: "1rem",
+  textDecoration: "none",
+});
+
+const ReportText = styled("span", {
   color: "#FCBC05",
+  fontSize: typography.fontSize.small,
+  fontWeight: typography.fontWeight.regular,
+  fontFamily: typography.fontFamily.primary,
+  letterSpacing: typography.letterSpacing.wide,
+});
+
+const ReportIcon = styled("div", {
+  backgroundColor: "white",
   borderRadius: "50%",
-  width: "2.75rem",
-  height: "2.75rem",
+  width: "5rem",
+  height: "5rem",
+  position: "relative",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  fontWeight: "bold",
-  boxShadow: "0 2px 8px rgba(255, 193, 7, 0.3)",
+  padding: "0.5rem",
+  overflow: "hidden",
+  transition: "background-color 0.3s ease",
+
+  "&:hover": {
+    backgroundColor: "#FCBC05",
+
+    "& .bos, & .number": {
+      color: colors.white,
+    }
+  },
+
+  "& .bos": {
+    position: "absolute",
+    top: "1rem",
+    left: "1.2rem",
+    color: "#FCBC05",
+    textAlign: "left",
+    fontSize: "12px",
+    fontWeight: typography.fontWeight.extraBold,
+    fontFamily: typography.fontFamily.primary,
+    transition: "color 0.3s ease",
+  },
+
+  "& .number": {
+    color: "#FCBC05",
+    fontSize: "1.8rem",
+    fontFamily: typography.fontFamily.primary,
+    fontWeight: typography.fontWeight.extraBold,
+    marginTop: "0.6rem",
+    textAlign: "center",
+    width: "100%",
+    transition: "color 0.3s ease",
+  }
 });
+
+
 
 export default function Footer() {
   return (
     <StyledFooter>
       <FooterContainer>
-        <div style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
-          <LogoContainer>
-            <Logo>B</Logo>
-            <Underline />
-          </LogoContainer>
-          <FooterNav>
-            <FooterLink href="/">PRIVACY POLICY</FooterLink>
-            <FooterLink href="/">CONTACT US</FooterLink>
-            <FooterLink href="/">JOBS</FooterLink>
-            <FooterLink href="/">PUBLIC RECORDS</FooterLink>
-            <FooterLink href="/">LANGUAGE AND DISABILITY ACCESS</FooterLink>
-          </FooterNav>
-        </div>
-        <ReportButton>
-          REPORT AN ISSUE
-          <ReportIcon>
-            <div style={{ fontSize: "0.6rem", lineHeight: "0.85rem", textAlign: "center" }}>
-              BOS:<br /><strong style={{ fontSize: "1.15rem" }}>311</strong>
-            </div>
-          </ReportIcon>
-        </ReportButton>
+        <TopSection>
+          <LeftSection>
+            <LogoContainer>
+              <img src="/cob_b_white-01.png" alt="Boston Logo" />
+            </LogoContainer>
+            <FooterNav>
+              <FooterLink href="https://www.boston.gov/departments/innovation-and-technology/terms-use-and-privacy-policy-city-boston-digital-services">PRIVACY POLICY</FooterLink>
+              <FooterLink href="https://www.boston.gov/departments/mayors-office/contact-boston-city-hall">CONTACT US</FooterLink>
+              <FooterLink href="https://www.boston.gov/career-center">JOBS</FooterLink>
+              <FooterLink href="https://bostonma.govqa.us/WEBAPP/_rs/(S(den310hnrpqz2rzh5lgbgsby))/SupportHome.aspx">PUBLIC RECORDS</FooterLink>
+              <FooterLink href="https://www.boston.gov/departments/language-and-communications-access/notice-accommodations">LANGUAGE AND DISABILITY ACCESS</FooterLink>
+            </FooterNav>
+          </LeftSection>
+          <ReportSection>
+            <ReportLink href="https://www.boston.gov/departments/boston-311" target="_blank" rel="noopener noreferrer">
+              <ReportText>REPORT AN ISSUE</ReportText>
+              <ReportIcon>
+                <span className="bos">BOS:</span>
+                <span className="number">311</span>
+              </ReportIcon>
+            </ReportLink>
+          </ReportSection>
+        </TopSection>
       </FooterContainer>
     </StyledFooter>
   );
