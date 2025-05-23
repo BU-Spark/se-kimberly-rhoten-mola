@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { colors, typography } from '../styles/constants';
 
 interface Resource {
   id: string;
@@ -36,7 +37,7 @@ export default function ResourceList({ resources }: ResourceListProps) {
 
   if (!resources || resources.length === 0) {
     return (
-      <p style={{ color: "#000", fontSize: "16px", fontWeight: 500 }}>
+      <p style={{ color: colors.black, fontSize: "16px", fontWeight: 500 }}>
         No resources found.
       </p>
     );
@@ -46,14 +47,14 @@ export default function ResourceList({ resources }: ResourceListProps) {
   const styles = {
     container: {
       marginTop: '2rem',
-      fontFamily: 'Arial, sans-serif',
+      fontFamily: typography.fontFamily.primary,
     },
     header: {
       fontSize: '1.2rem',
       fontWeight: 'normal',
-      color: '#333',
+      color: colors.supportingGrays.dark,
       marginBottom: '1.5rem',
-      borderBottom: '1px solid #e0e0e0',
+      borderBottom: `1px solid ${colors.supportingGrays.light}`,
       paddingBottom: '1rem',
     },
     resourceList: {
@@ -63,7 +64,7 @@ export default function ResourceList({ resources }: ResourceListProps) {
     },
     resourceItem: {
       padding: '1.5rem 0',
-      borderBottom: '1px solid #e0e0e0',
+      borderBottom: `1px solid ${colors.supportingGrays.light}`,
     },
     resourceHeader: {
       display: 'flex',
@@ -74,24 +75,25 @@ export default function ResourceList({ resources }: ResourceListProps) {
     resourceTitle: {
       fontSize: '1.75rem',
       fontWeight: 'bold',
-      color: '#000',
+      color: colors.black,
       margin: 0,
       textDecoration: 'none',
     },
     resourceSubtitle: {
       fontSize: '1.25rem',
-      color: '#333',
+      color: colors.supportingGrays.dark,
       margin: '0.5rem 0 0 0',
     },
     resourceAddress: {
       textAlign: 'right' as const,
       fontSize: '1rem',
       lineHeight: '1.5',
+      color: colors.black,
     },
     resourceDescription: {
       fontSize: '1rem',
       lineHeight: '1.6',
-      color: '#333',
+      color: colors.supportingGrays.dark,
       margin: 0,
     },
     link: {
