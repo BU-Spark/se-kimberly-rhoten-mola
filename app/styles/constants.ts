@@ -3,7 +3,7 @@ export const colors = {
   // Primary Colors
   charlesBlue: '#091F2F', // Pantone: 295C
   optimisticBlue: '#1871BD', // Pantone: 285C
-  freedomTrailRed: '#FB4D42', // Pantone: 1788C
+  freedomTrailRed: '#D22D23', // Pantone: 1788C
 
   // Supporting Blues
   supportingBlues: {

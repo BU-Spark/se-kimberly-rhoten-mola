@@ -6,7 +6,7 @@ import { typography, colors } from "../styles/constants";
 
 // Styled components
 const StyledFooter = styled("footer", {
-  backgroundColor: "#0C273A",
+  backgroundColor: colors.charlesBlue,
   color: "white",
   padding: "0.9rem 0.9rem 0.9rem",
   width: "100%",

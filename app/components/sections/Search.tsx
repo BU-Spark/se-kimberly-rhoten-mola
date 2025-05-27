@@ -2,6 +2,7 @@
 
 import React from "react";
 import SearchBar from "@/app/components/SearchBar";
+import { colors } from "@/app/styles/constants";  
 
 interface SearchProps {
   onFilter: (filters: { category?: string; subcategory?: string }) => void;
@@ -45,7 +46,7 @@ const Search: React.FC<SearchProps> = ({ onFilter }) => {
     },
     button: {
       padding: "1rem 2rem",
-      backgroundColor: "#FB4D43",
+      backgroundColor: colors.freedomTrailRed,
       color: "white",
       border: "none",
       borderRadius: "8px",
