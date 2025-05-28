@@ -73,10 +73,14 @@ const styles = {
   
   mainContent: {
     transition: "transform 0.3s cubic-bezier(.4,0,.2,1)",
+    display: "flex",
+    flexDirection: "column",
+    minHeight: "100vh",
   } as React.CSSProperties,
   
   main: {
     paddingTop: "60px",
+    flex: "1 0 auto",
   } as React.CSSProperties,
 };
 

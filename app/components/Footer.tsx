@@ -13,6 +13,7 @@ const StyledFooter = styled("footer", {
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
+  marginTop: "auto",
 });
 
 const FooterContainer = styled("div", {
