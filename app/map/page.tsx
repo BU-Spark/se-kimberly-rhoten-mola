@@ -7,9 +7,6 @@ import Map from "../components/Map";
 import { FiFilter } from "react-icons/fi";
 import { FiX } from "react-icons/fi";
 import { 
-  FaHeart, 
-  FaBuilding, 
-  FaCross,
   FaChevronDown,
   FaChevronUp
 } from "react-icons/fa";

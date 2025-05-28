@@ -3,6 +3,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useEffect, useRef, useState } from "react";
 import { GoogleMap } from "@react-google-maps/api";
+import { colors } from "../styles/constants";
 
 const defaultCenter = { lat: 42.3601, lng: -71.0589 };
 
@@ -73,10 +74,12 @@ export default function Map({ markers = [], center, onMarkerClick }: MapProps) {
                 markerData.Organization_Name || "Unknown Organization";
               nameEl.style.fontWeight = "bold";
               nameEl.style.marginBottom = "4px";
+              nameEl.style.color = colors.charlesBlue;
               contentDiv.appendChild(nameEl);
               const addrEl = document.createElement("div");
               addrEl.textContent = markerData.Organization_Address || "Address not available";
               addrEl.style.marginBottom = "4px";
+              addrEl.style.color = colors.charlesBlue;
               contentDiv.appendChild(addrEl);
 
               // Add Type_Of_Service if available
@@ -93,7 +96,7 @@ export default function Map({ markers = [], center, onMarkerClick }: MapProps) {
               detailLink.textContent = "View Details";
               detailLink.style.display = "block";
               detailLink.style.marginTop = "4px";
-              detailLink.style.color = "#0070f3";
+              detailLink.style.color = colors.charlesBlue;
               detailLink.style.textDecoration = "underline";
               contentDiv.appendChild(detailLink);
               infoWindowRef.current!.setContent(contentDiv);
