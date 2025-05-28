@@ -55,7 +55,7 @@
 
 .headerText span {
   font-size: 0.9rem;
-  color: #091F2F;
+  color: #091f2f;
   text-decoration: none;
   font-size: 20px;
   font-weight: bold;
@@ -72,7 +72,7 @@
 .navMenu a {
   text-decoration: none;
   font-size: 20px;
-  color: #1871BD;
+  color: #1871bd;
   font-weight: bold;
 }
 
@@ -83,7 +83,6 @@
 }
 
 .searchContainer {
-  
   display: flex;
   width: 300%;
   justify-content: left;
@@ -92,7 +91,7 @@
 
 .searchInput {
   width: 100rem;
-  min-height: 3rem;       /* ensures the input is at least 3rem tall */
+  min-height: 3rem; /* ensures the input is at least 3rem tall */
   padding: 1.5rem 0.75rem; /* vertical padding increased to make it thicker */
   margin-right: 0.5rem;
   font-size: 1.125rem;
@@ -101,10 +100,10 @@
 }
 
 .searchButton {
-  background-color: #45789C;
+  background-color: #45789c;
   color: #fff;
   border: none;
-  padding: 1.5rem 1.25rem;  /* increase vertical padding to match the input */
+  padding: 1.5rem 1.25rem; /* increase vertical padding to match the input */
   cursor: pointer;
   font-weight: 500;
   font-size: 1.125rem;

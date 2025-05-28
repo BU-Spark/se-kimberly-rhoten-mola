@@ -3,7 +3,7 @@ export const colors = {
   // Primary Colors
   charlesBlue: '#091F2F', // Pantone: 295C
   optimisticBlue: '#1871BD', // Pantone: 285C
-  freedomTrailRed: '#FB4D42', // Pantone: 1788C
+  freedomTrailRed: '#D22D23', // Pantone: 1788C
 
   // Supporting Blues
   supportingBlues: {
@@ -28,12 +28,14 @@ export const colors = {
 
 // Images/Logos
 export const images = {
-  logo: "https://www.boston.gov/sites/default/files/styles/med_small_square__200x200_/public/img/columns/2016/11/cob_b_white-01.png?itok=-SZRDrhw",
-  logo_black: "https://patterns.boston.gov/images/b-dark.svg",
-  digital_seal: "https://www.boston.gov/sites/default/files/styles/med_small_square__200x200_/public/img/columns/2016/11/city_seal_white-01.png?itok=cN-iUf0a",
-  digital_seal_black: "https://patterns.boston.gov/images/public/seal.svg?swlhyg",
-  official_seal: "https://www.boston.gov/sites/default/files/styles/med_small_square__200x200_/public/img/2016/o/official_seal_white-01.png?itok=656ZgJzQ"
-}
+  logo: 'https://www.boston.gov/sites/default/files/styles/med_small_square__200x200_/public/img/columns/2016/11/cob_b_white-01.png?itok=-SZRDrhw',
+  logo_black: 'https://patterns.boston.gov/images/b-dark.svg',
+  digital_seal:
+    'https://www.boston.gov/sites/default/files/styles/med_small_square__200x200_/public/img/columns/2016/11/city_seal_white-01.png?itok=cN-iUf0a',
+  digital_seal_black: 'https://patterns.boston.gov/images/public/seal.svg?swlhyg',
+  official_seal:
+    'https://www.boston.gov/sites/default/files/styles/med_small_square__200x200_/public/img/2016/o/official_seal_white-01.png?itok=656ZgJzQ',
+};
 
 // Typography
 export const typography = {
@@ -85,11 +87,11 @@ export const typography = {
 // Spacing System
 export const spacing = {
   xs: '0.25rem', // 4px
-  sm: '0.5rem',  // 8px
-  md: '1rem',    // 16px
-  lg: '1.5rem',  // 24px
-  xl: '2rem',    // 32px
-  xxl: '3rem',   // 48px
+  sm: '0.5rem', // 8px
+  md: '1rem', // 16px
+  lg: '1.5rem', // 24px
+  xl: '2rem', // 32px
+  xxl: '3rem', // 48px
 };
 
 // Breakpoints
@@ -108,4 +110,4 @@ export const zIndex = {
   modal: 200,
   tooltip: 300,
   overlay: 400,
-}; 
+};

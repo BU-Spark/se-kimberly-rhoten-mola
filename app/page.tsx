@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, { useEffect, useState } from "react";
-import styles from "./page.module.css";
+import React, { useEffect, useState } from 'react';
+import styles from './page.module.css';
 
-import Search from "@/app/components/sections/Search";
-import Map from "@/app/components/sections/Maps";
+import Search from '@/app/components/sections/Search';
+import Map from '@/app/components/sections/Maps';
 
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase/configfirebase";
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebase/configfirebase';
 
 interface MarkerData {
   id: string;
@@ -18,27 +18,25 @@ interface MarkerData {
   Organization_Address?: string;
 }
 
-async function geocodeAddress(
-  address: string,
-): Promise<{ lat: number; lng: number }> {
+async function geocodeAddress(address: string): Promise<{ lat: number; lng: number }> {
   const normalized = address.toLowerCase().trim();
-  if (normalized === "n/a" || normalized === "virtual" || normalized === "") {
+  if (normalized === 'n/a' || normalized === 'virtual' || normalized === '') {
     return { lat: 42.3601, lng: -71.0589 };
   }
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-  const encoded = encodeURIComponent(address);
-  const res = await fetch(
-    `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${apiKey}`
-  );
-  const data = await res.json();
-  if (data.status === "OK" && data.results.length > 0) {
-    return data.results[0].geometry.location;
-  } else {
-    console.error(
-      "Geocoding error for address:",
-      address,
-      data.error_message || data.status,
-    );
+
+  try {
+    const encoded = encodeURIComponent(address);
+    const res = await fetch(`/api/geocode?address=${encoded}`);
+    const data = await res.json();
+
+    if (res.ok) {
+      return { lat: data.lat, lng: data.lng };
+    } else {
+      console.error('Error from geocoding API:', data.error);
+      return { lat: 42.3601, lng: -71.0589 };
+    }
+  } catch (error) {
+    console.error('Error fetching geocoding API:', error);
     return { lat: 42.3601, lng: -71.0589 };
   }
 }
@@ -56,11 +54,7 @@ async function geocodeAddressIfNeeded(docData: any): Promise<MarkerData> {
         Organization_Address: docData.Organization_Address,
       };
     } catch (error) {
-      console.error(
-        "Error geocoding address for doc:",
-        docData.Organization_Address,
-        error,
-      );
+      console.error('Error geocoding address for doc:', docData.Organization_Address, error);
     }
   }
   return {
@@ -79,28 +73,23 @@ export default function Home() {
   useEffect(() => {
     const fetchAllOrganizations = async () => {
       try {
-        const snapshot = await getDocs(collection(db, "Organizations"));
-        const docs = snapshot.docs.map((doc) => ({
+        const snapshot = await getDocs(collection(db, 'Organizations'));
+        const docs = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
         }));
-        const geocodedPromises = docs.map((docData) =>
-          geocodeAddressIfNeeded(docData),
-        );
+        const geocodedPromises = docs.map(docData => geocodeAddressIfNeeded(docData));
         const finalMarkers = await Promise.all(geocodedPromises);
         setMarkers(finalMarkers);
       } catch (error) {
-        console.error("Error fetching organizations:", error);
+        console.error('Error fetching organizations:', error);
       }
     };
 
     fetchAllOrganizations();
   }, []);
 
-  const handleFilter = (filters: {
-    category?: string;
-    subcategory?: string;
-  }) => {  };
+  const handleFilter = () => {};
 
   return (
     <div className={styles.container}>
