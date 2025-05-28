@@ -284,7 +284,7 @@ export default function MapPage() {
     mapContainer: {
       marginTop: spacing.xl,
       position: "relative" as const,
-      height: "600px",
+      height: "75vh",
       width: "100%",
       border: `1px solid ${colors.supportingGrays.light}`,
       borderTop: `4px solid ${colors.freedomTrailRed}`,
