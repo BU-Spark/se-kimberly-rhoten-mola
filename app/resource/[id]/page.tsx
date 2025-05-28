@@ -57,20 +57,23 @@ export default function ResourceDetailPage() {
     }
   }, [resource]);
 
-  // Helper function to geocode an address using the Google Geocoding API.
+  // Helper function to geocode an address using the server-side API.
   async function geocodeAddress(
     address: string,
   ): Promise<{ lat: number; lng: number }> {
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-    const encoded = encodeURIComponent(address);
-    const res = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${apiKey}`
-    );
-    const data = await res.json();
-    if (data.status === "OK" && data.results.length > 0) {
-      return data.results[0].geometry.location;
-    } else {
-      console.error("Geocoding error:", data.error_message || data.status);
+    try {
+      const encoded = encodeURIComponent(address);
+      const res = await fetch(`/api/geocode?address=${encoded}`);
+      const data = await res.json();
+      
+      if (res.ok) {
+        return { lat: data.lat, lng: data.lng };
+      } else {
+        console.error("Error from geocoding API:", data.error);
+        throw new Error("Geocoding failed");
+      }
+    } catch (error) {
+      console.error("Error fetching geocoding API:", error);
       throw new Error("Geocoding failed");
     }
   }

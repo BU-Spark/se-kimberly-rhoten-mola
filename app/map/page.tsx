@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { colors, typography, spacing } from "../styles/constants";
 import Map from "../components/Map";
-import { FiArrowLeft, FiFilter } from "react-icons/fi";
+import { FiFilter } from "react-icons/fi";
 import { FiX } from "react-icons/fi";
 import { 
   FaHeart, 
@@ -55,20 +55,20 @@ async function geocodeAddress(
   if (normalized === "n/a" || normalized === "virtual" || normalized === "") {
     return { lat: 42.3601, lng: -71.0589 };
   }
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-  const encoded = encodeURIComponent(address);
-  const res = await fetch(
-    `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${apiKey}`
-  );
-  const data = await res.json();
-  if (data.status === "OK" && data.results.length > 0) {
-    return data.results[0].geometry.location;
-  } else {
-    console.error(
-      "Geocoding error for address:",
-      address,
-      data.error_message || data.status,
-    );
+  
+  try {
+    const encoded = encodeURIComponent(address);
+    const res = await fetch(`/api/geocode?address=${encoded}`);
+    const data = await res.json();
+    
+    if (res.ok) {
+      return { lat: data.lat, lng: data.lng };
+    } else {
+      console.error("Error from geocoding API:", data.error);
+      return { lat: 42.3601, lng: -71.0589 };
+    }
+  } catch (error) {
+    console.error("Error fetching geocoding API:", error);
     return { lat: 42.3601, lng: -71.0589 };
   }
 }

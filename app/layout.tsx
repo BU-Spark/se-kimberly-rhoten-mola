@@ -7,8 +7,6 @@ import Footer from "./components/Footer";
 import React, { useState } from "react";
 import { colors, typography, images } from "./styles/constants";
 
-const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string;
-
 // Extracted styles
 const styles = {
   sidebar: {
@@ -100,7 +98,7 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <GoogleMapsProvider apiKey={apiKey}>
+        <GoogleMapsProvider>
           {/* Sidebar */}
           {isSidebarOpen && (
             <div style={styles.sidebar}>
