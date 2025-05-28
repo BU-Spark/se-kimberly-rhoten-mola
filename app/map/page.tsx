@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { colors, typography, spacing } from '../styles/constants';
 import Map from '../components/Map';
@@ -25,7 +25,7 @@ interface OrganizationData {
   Organization_Name?: string;
   Organization_Address?: string;
   Type_Of_Service?: string | string[];
-  [key: string]: any;
+  [key: string]: string | string[] | number | undefined;
 }
 
 // Service categories options
@@ -65,8 +65,7 @@ async function geocodeAddress(address: string): Promise<{ lat: number; lng: numb
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function geocodeAddressIfNeeded(docData: any): Promise<MarkerData> {
+async function geocodeAddressIfNeeded(docData: OrganizationData): Promise<MarkerData> {
   if (docData.Organization_Address) {
     try {
       const result = await geocodeAddress(docData.Organization_Address);
@@ -208,28 +207,6 @@ export default function MapPage() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  // Function to fetch complete organization data for a specific marker
-  const fetchOrganizationData = async (markerId: string): Promise<OrganizationData | null> => {
-    try {
-      const docRef = doc(db, 'Organizations', markerId);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        const orgData: OrganizationData = {
-          id: docSnap.id,
-          ...data,
-        };
-        return orgData;
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error('Error fetching organization data:', error);
-      return null;
-    }
-  };
 
   const styles = {
     container: {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase/configfirebase';
@@ -10,9 +10,28 @@ import Link from 'next/link';
 // Dynamically import Map to ensure client-side rendering.
 const Map = dynamic(() => import('../../components/Map'), { ssr: false });
 
+interface ResourceData {
+  Organization_Name?: string;
+  Organization_Description?: string;
+  Organization_Website?: string;
+  Organization_Address?: string;
+  Public_Phone_Number?: string;
+  Public_Email?: string;
+  Preferred_Method_Of_Organizational_Contact?: string;
+  Type_Of_Service?: string;
+  Target_Population?: string;
+  Neighborhood_Of_Organization_Neighborhoods_Primarily_Served?: string;
+  Days_Hours_Of_Operation?: string;
+  Program_Cost_To_Participant?: string;
+  Health_Insurance_Required?: string;
+  lat?: number;
+  lng?: number;
+  [key: string]: string | number | undefined;
+}
+
 export default function ResourceDetailPage() {
   const { id } = useParams(); // Firestore document ID from the URL
-  const [resource, setResource] = useState<any | null>(null);
+  const [resource, setResource] = useState<ResourceData | null>(null);
   const [coordinates, setCoordinates] = useState<{
     lat: number;
     lng: number;
@@ -26,8 +45,9 @@ export default function ResourceDetailPage() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
-          setResource(data);
+          setResource(data as ResourceData);
         } else {
+          console.log("Document doesn't exist");
         }
       } catch (error) {
         console.error('Error fetching resource:', error);

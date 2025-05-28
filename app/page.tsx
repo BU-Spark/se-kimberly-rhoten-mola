@@ -89,7 +89,7 @@ export default function Home() {
     fetchAllOrganizations();
   }, []);
 
-  const handleFilter = (filters: { category?: string; subcategory?: string }) => {};
+  const handleFilter = () => {};
 
   return (
     <div className={styles.container}>

@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 import { db } from '../../firebase/configfirebase';
 import { collection, getDocs } from 'firebase/firestore';
@@ -14,13 +14,12 @@ interface Organization {
   id: string;
   Organization_Name: string;
   Type_Of_Service?: string;
-  [key: string]: any;
+  [key: string]: string | undefined;
 }
 
 export default function DatabasePage() {
   const [allResources, setAllResources] = useState<Organization[]>([]);
   const [filteredResources, setFilteredResources] = useState<Organization[]>([]);
-  const router = useRouter();
 
   // Grab query params: e.g. /database?search=Impact&filters=Food,Hotlines
   const searchParams = useSearchParams();
