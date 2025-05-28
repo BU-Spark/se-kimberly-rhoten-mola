@@ -24,7 +24,7 @@ export default function ResourceList({ resources }: ResourceListProps) {
   const searchParams = useSearchParams();
   const filters = searchParams.get('filters');
   const search = searchParams.get('search');
-  
+
   // Determine what to display in the header
   let filterDisplay = 'All Categories';
   if (filters) {
@@ -37,12 +37,9 @@ export default function ResourceList({ resources }: ResourceListProps) {
 
   if (!resources || resources.length === 0) {
     return (
-      <p style={{ color: colors.black, fontSize: "16px", fontWeight: 500 }}>
-        No resources found.
-      </p>
+      <p style={{ color: colors.black, fontSize: '16px', fontWeight: 500 }}>No resources found.</p>
     );
   }
-
 
   const styles = {
     container: {
@@ -99,7 +96,7 @@ export default function ResourceList({ resources }: ResourceListProps) {
     link: {
       textDecoration: 'none',
       color: 'inherit',
-    }
+    },
   };
 
   return (
@@ -107,9 +104,9 @@ export default function ResourceList({ resources }: ResourceListProps) {
       <h2 style={styles.header}>
         Showing {resources.length} results for: {filterDisplay}
       </h2>
-      
+
       <div style={styles.resourceList}>
-        {resources.map((res) => (
+        {resources.map(res => (
           <div key={res.id} style={styles.resourceItem}>
             <div style={styles.resourceHeader}>
               <div>
@@ -118,25 +115,19 @@ export default function ResourceList({ resources }: ResourceListProps) {
                     {res.Organization_Name || 'Unnamed Resource'}
                   </h3>
                 </Link>
-                <p style={styles.resourceSubtitle}>
-                  {res.Type_Of_Service || ''}
-                </p>
+                <p style={styles.resourceSubtitle}>{res.Type_Of_Service || ''}</p>
               </div>
-              
+
               <div style={styles.resourceAddress}>
                 {res.Organization_Address && (
                   <>
                     <div>{res.Organization_Address}</div>
-                    <div>
-                      {[res.City, res.State, res.Zip_Code]
-                        .filter(Boolean)
-                        .join(', ')}
-                    </div>
+                    <div>{[res.City, res.State, res.Zip_Code].filter(Boolean).join(', ')}</div>
                   </>
                 )}
               </div>
             </div>
-            
+
             <p style={styles.resourceDescription}>
               {res.Organization_Description || 'No description available.'}
             </p>

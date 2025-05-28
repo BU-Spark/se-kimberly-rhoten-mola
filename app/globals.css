@@ -19,7 +19,7 @@ body {
 body {
   /* Remove or comment out the old background rule */
   /* background: var(--background); */
-  
+
   background-color: #f5faff; /* Light blue background for the entire site */
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
@@ -38,15 +38,15 @@ body {
 
 /* globals.css */
 a {
-  color: #0070f3;         /* A blue color for links */
-  text-decoration: none;  /* Underline links to distinguish them from plain text */
-  transition: color 0.2s ease;   /* Optional: Smooth transition for hover effects */
+  color: #0070f3; /* A blue color for links */
+  text-decoration: none; /* Underline links to distinguish them from plain text */
+  transition: color 0.2s ease; /* Optional: Smooth transition for hover effects */
 }
 
 a:hover,
 a:focus {
-  color: #0055aa;         /* A darker blue for hover/focus state */
-  text-decoration: none;  /* Remove underline on hover if desired */
+  color: #0055aa; /* A darker blue for hover/focus state */
+  text-decoration: none; /* Remove underline on hover if desired */
 }
 
 @media (prefers-color-scheme: dark) {

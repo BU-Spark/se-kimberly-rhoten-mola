@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import Link from 'next/link';
@@ -106,8 +106,8 @@ export default function FeedbackPage() {
       fontSize: '1rem',
       fontFamily: typography.fontFamily.primary,
       outline: 'none',
-			backgroundColor: colors.white,
-			color: colors.charlesBlue,
+      backgroundColor: colors.white,
+      color: colors.charlesBlue,
     },
     optional: {
       fontSize: '0.9rem',
@@ -141,8 +141,8 @@ export default function FeedbackPage() {
         </Link>
         <h1 style={styles.title}>Share Your Feedback</h1>
         <p style={styles.description}>
-          We value your input! Please share your thoughts about our website
-          and how we can improve your experience.
+          We value your input! Please share your thoughts about our website and how we can improve
+          your experience.
         </p>
       </div>
 
@@ -150,11 +150,13 @@ export default function FeedbackPage() {
         <fieldset style={styles.fieldset}>
           <label style={styles.label}>How would you rate your experience?</label>
           <div style={styles.starsContainer}>
-            {[1, 2, 3, 4, 5].map((star) => (
+            {[1, 2, 3, 4, 5].map(star => (
               <FaStar
                 key={star}
                 style={styles.star}
-                color={star <= (hover || rating) ? colors.optimisticBlue : colors.supportingGrays.light}
+                color={
+                  star <= (hover || rating) ? colors.optimisticBlue : colors.supportingGrays.light
+                }
                 onClick={() => setRating(star)}
                 onMouseEnter={() => setHover(star)}
                 onMouseLeave={() => setHover(0)}
@@ -163,7 +165,7 @@ export default function FeedbackPage() {
           </div>
         </fieldset>
 
-				<fieldset style={styles.fieldset}>
+        <fieldset style={styles.fieldset}>
           <label style={styles.label}>
             Name <span style={styles.optional}>(optional)</span>
           </label>
@@ -171,7 +173,7 @@ export default function FeedbackPage() {
             type="text"
             style={styles.input}
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={e => setName(e.target.value)}
             placeholder="Your name"
           />
         </fieldset>
@@ -184,7 +186,7 @@ export default function FeedbackPage() {
             type="email"
             style={styles.input}
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             placeholder="Your email address"
           />
         </fieldset>
@@ -194,7 +196,7 @@ export default function FeedbackPage() {
           <textarea
             style={styles.textarea}
             value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
+            onChange={e => setFeedback(e.target.value)}
             placeholder="Please share your thoughts, suggestions, or concerns..."
             required
           />
@@ -206,4 +208,4 @@ export default function FeedbackPage() {
       </form>
     </div>
   );
-} 
+}

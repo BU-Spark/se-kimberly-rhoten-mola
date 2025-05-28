@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useSearchParams, useRouter } from 'next/navigation';
 
-import { db } from "../../firebase/configfirebase";
-import { collection, getDocs } from "firebase/firestore";
+import { db } from '../../firebase/configfirebase';
+import { collection, getDocs } from 'firebase/firestore';
 
-import ResourceList from "../components/ResourceList";
-import SearchBar from "../components/SearchBar";
+import ResourceList from '../components/ResourceList';
+import SearchBar from '../components/SearchBar';
 
 interface Organization {
   id: string;
@@ -24,22 +24,22 @@ export default function DatabasePage() {
 
   // Grab query params: e.g. /database?search=Impact&filters=Food,Hotlines
   const searchParams = useSearchParams();
-  const searchText = searchParams.get("search") || "";
-  const filtersParam = searchParams.get("filters") || "";
+  const searchText = searchParams.get('search') || '';
+  const filtersParam = searchParams.get('filters') || '';
 
   useEffect(() => {
     // Fetch all resources once on load.
     const fetchResources = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "Organizations"));
+        const querySnapshot = await getDocs(collection(db, 'Organizations'));
         const data: Organization[] = [];
-        querySnapshot.forEach((doc) => {
+        querySnapshot.forEach(doc => {
           const docData = doc.data() as Organization;
           // Filter out entries with no name or "Unnamed Resource"
           if (
             docData.Organization_Name &&
-            docData.Organization_Name.trim() !== "" &&
-            docData.Organization_Name !== "Unnamed Resource"
+            docData.Organization_Name.trim() !== '' &&
+            docData.Organization_Name !== 'Unnamed Resource'
           ) {
             data.push({ ...docData, id: doc.id });
           }
@@ -47,12 +47,12 @@ export default function DatabasePage() {
 
         // Remove duplicates based on Organization_Name
         const uniqueResources = Array.from(
-          new Map(data.map((item) => [item.Organization_Name, item])).values(),
+          new Map(data.map(item => [item.Organization_Name, item])).values()
         );
 
         setAllResources(uniqueResources);
       } catch (err) {
-        console.error("Error fetching resources:", err);
+        console.error('Error fetching resources:', err);
       }
     };
 
@@ -62,18 +62,15 @@ export default function DatabasePage() {
   // Whenever searchText or filtersParam changes, re-filter the existing resources in memory.
   useEffect(() => {
     // 1. Build an array of service filters (if any).
-    const selectedServices = filtersParam
-      ? filtersParam.split(",").map((s) => s.trim())
-      : [];
+    const selectedServices = filtersParam ? filtersParam.split(',').map(s => s.trim()) : [];
 
     // 2. Convert searchText to lowercase for case-insensitive matching.
     const lowerSearch = searchText.toLowerCase();
 
     // 3. Filter the resources in memory.
-    const results = allResources.filter((resource) => {
+    const results = allResources.filter(resource => {
       // A. Text Match Check (case-insensitive substring of Organization_Name).
-      const nameMatches =
-        resource.Organization_Name.toLowerCase().includes(lowerSearch);
+      const nameMatches = resource.Organization_Name.toLowerCase().includes(lowerSearch);
 
       // B. Service Category Check
       // If no services are selected, we skip this check (i.e. pass).
@@ -101,52 +98,52 @@ export default function DatabasePage() {
 
   const styles = {
     container: {
-      maxWidth: "1200px",
-      margin: "0 auto",
-      padding: "2rem 1rem",
-      fontFamily: "Arial, sans-serif",
+      maxWidth: '1200px',
+      margin: '0 auto',
+      padding: '2rem 1rem',
+      fontFamily: 'Arial, sans-serif',
     },
     backButton: {
-      display: "inline-flex",
-      alignItems: "center",
-      fontSize: "1.2rem",
-      color: "#000",
-      marginBottom: "1.5rem",
-      cursor: "pointer",
-      background: "none",
-      border: "none",
+      display: 'inline-flex',
+      alignItems: 'center',
+      fontSize: '1.2rem',
+      color: '#000',
+      marginBottom: '1.5rem',
+      cursor: 'pointer',
+      background: 'none',
+      border: 'none',
       padding: 0,
     },
     backArrow: {
-      fontSize: "1.5rem",
-      marginRight: "0.5rem",
+      fontSize: '1.5rem',
+      marginRight: '0.5rem',
     },
     title: {
-      fontSize: "3rem",
-      fontWeight: "bold",
-      margin: "0 0 1rem 0",
-      color: "#0a2240",
+      fontSize: '3rem',
+      fontWeight: 'bold',
+      margin: '0 0 1rem 0',
+      color: '#0a2240',
     },
     description: {
-      fontSize: "1.25rem",
-      marginBottom: "2rem",
-      maxWidth: "800px",
-      lineHeight: "1.6",
-      color: "#333",
+      fontSize: '1.25rem',
+      marginBottom: '2rem',
+      maxWidth: '800px',
+      lineHeight: '1.6',
+      color: '#333',
     },
     searchContainer: {
-      marginBottom: "2rem",
-      width: "100%",
-      border: "1px solid #ccc",
-      borderRadius: "4px",
-      overflow: "hidden",
+      marginBottom: '2rem',
+      width: '100%',
+      border: '1px solid #ccc',
+      borderRadius: '4px',
+      overflow: 'hidden',
     },
     divider: {
-      height: "1px",
-      backgroundColor: "#0a2240",
-      width: "100%",
-      margin: "2rem 0",
-    }
+      height: '1px',
+      backgroundColor: '#0a2240',
+      width: '100%',
+      margin: '2rem 0',
+    },
   };
 
   return (
@@ -156,19 +153,20 @@ export default function DatabasePage() {
           <span style={styles.backArrow}>←</span>
         </button>
       </Link>
-      
+
       <h1 style={styles.title}>
-        LGBTQIA2S+<br />
+        LGBTQIA2S+
+        <br />
         Resource Database
       </h1>
-      
+
       <p style={styles.description}>
-        Welcome to the LGBTQIA2S+ resource database. Here, you will find
-        resources in the Boston area. Apply filters
+        Welcome to the LGBTQIA2S+ resource database. Here, you will find resources in the Boston
+        area. Apply filters
       </p>
 
       <SearchBar />
-      
+
       <div style={styles.divider}></div>
 
       <ResourceList resources={filteredResources} />

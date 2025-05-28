@@ -7,7 +7,11 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --fix"
+    "lint": "eslint ./app --fix",
+    "format": "prettier --write './app/**/*.{js,jsx,ts,tsx,json,css,md}'",
+    "check-format": "prettier --check './app/**/*.{js,jsx,ts,tsx,json,css,md}'",
+    "check": "npm run lint && npm run check-format",
+    "fix-all": "npm run format && npm run lint"
   },
   "dependencies": {
     "20": "^3.1.9",
